@@ -6,6 +6,8 @@ import android.os.Looper
 import android.util.Log
 import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.presentation.AdMobViewModel
+import com.example.module_ads.utils.debug
+import com.example.module_ads.utils.toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
 import javax.inject.Inject
@@ -56,7 +58,7 @@ class InterstitialAdHelper @Inject constructor() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     // Show the interstitial ad.
                     returnNormalInterstitialAd()?.show(activity)
-                },1000)
+                }, 1000)
 
             }
 
@@ -65,27 +67,30 @@ class InterstitialAdHelper @Inject constructor() {
                 object : FullScreenContentCallback() {
                     // Callback triggered when the ad is clicked.
                     override fun onAdClicked() {
-                        Log.d("TAG", "Ad was clicked.")
+                        debug("Ad was clicked.")
+                        activity.toast("Ad was clicked.")
                         onAdClicked?.invoke()
                     }
 
                     // Callback triggered when ad is dismissed.
                     override fun onAdDismissedFullScreenContent() {
-                        Log.d("TAG", "Ad dismissed fullscreen content.")
+                        debug("Ad dismissed fullscreen content.")
+                        activity.toast("Ad dismissed fullscreen content.")
                         // Release the ad reference.
                         releaseNormalInterstitialAd()
                         // Dismiss the full-screen dialog.
                         fullScreenDialog?.dismiss()
-                        fullScreenDialog=null
+                        fullScreenDialog = null
                         onAdDismissedFullScreenContent?.invoke()
                     }
 
                     // Callback triggered when ad fails to show.
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                        Log.e("TAG", "Ad failed to show fullscreen content.")
+                        debug("Ad failed to show fullscreen content.")
+                        activity.toast("Ad failed to show fullscreen content.")
                         // Dismiss the full-screen dialog.
                         fullScreenDialog?.dismiss()
-                        fullScreenDialog=null
+                        fullScreenDialog = null
                         // Release the ad reference.
                         releaseNormalInterstitialAd()
                         // Invoke the callback with the error details.
@@ -94,16 +99,18 @@ class InterstitialAdHelper @Inject constructor() {
 
                     // Callback triggered when an impression is recorded.
                     override fun onAdImpression() {
-                        Log.d("TAG", "Ad recorded an impression.")
+                        debug("Ad recorded an impression.")
+                        activity.toast("Ad recorded an impression.")
                         onAdImpression?.invoke()
                     }
 
                     // Callback triggered when the ad is shown.
                     override fun onAdShowedFullScreenContent() {
-                        Log.d("TAG", "Ad showed fullscreen content.")
+                        debug("Ad showed fullscreen content.")
+                        activity.toast("Ad showed fullscreen content.")
                         // Dismiss the full-screen dialog.
                         fullScreenDialog?.dismiss()
-                        fullScreenDialog=null
+                        fullScreenDialog = null
                         onAdShowedFullScreenContent?.invoke()
                     }
                 }

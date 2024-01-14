@@ -3,6 +3,8 @@ package com.example.module_ads.data
 import android.content.Context
 import android.util.Log
 import com.example.module_ads.domain.InterstitialAdRepository
+import com.example.module_ads.utils.debug
+import com.example.module_ads.utils.toast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -50,7 +52,10 @@ class InterstitialAdRepositoryImpl @Inject constructor(
             object : InterstitialAdLoadCallback() {
                 // Callback triggered when ad fails to load.
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d("TAG", adError.toString())
+                    val error =
+                        "domain: ${adError.domain}, code: ${adError.code}, " + "message: ${adError.message}"
+                    debug("onAdFailedToLoad() with error $error")
+                    context.toast("onAdFailedToLoad() with error $error")
                     // Set the ad instance to null.
                     normalInterstitialAd = null
                     adIsLoading = false
@@ -60,7 +65,8 @@ class InterstitialAdRepositoryImpl @Inject constructor(
 
                 // Callback triggered when ad is successfully loaded.
                 override fun onAdLoaded(interstitialAd1: InterstitialAd) {
-                    Log.d("TAG", "Ad was loaded.")
+                    debug("Ad was loaded.")
+                    context.toast("Ad was loaded.")
                     // Set the loaded ad instance.
                     normalInterstitialAd = interstitialAd1
                     adIsLoading = false

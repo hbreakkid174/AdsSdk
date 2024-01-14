@@ -15,7 +15,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TestScreenActivitiy : AppCompatActivity() {
     private var binding: ActivityTestScreenActivitiyBinding? = null
-    private val adMobViewModel: com.example.module_ads.presentation.AdMobViewModel by viewModels()
+    private val adMobViewModel: AdMobViewModel by viewModels()
 
     @Inject
     lateinit var interstitialAdHelper: InterstitialAdHelper
