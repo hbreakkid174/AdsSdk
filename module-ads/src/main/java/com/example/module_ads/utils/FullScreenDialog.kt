@@ -1,4 +1,4 @@
-package com.example.module_ads
+package com.example.module_ads.utils
 
 import android.app.Activity
 import android.app.Dialog
@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.Window
+import com.example.module_ads.R
 import com.example.module_ads.databinding.InterstitialLoadingDialogBinding
 
 class FullScreenDialog (private val context: Activity,

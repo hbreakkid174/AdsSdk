@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.module_ads.AdMobAdState
+import com.example.module_ads.utils.AdMobAdState
 import com.example.module_ads.domain.InterstitialAdRepository
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.lifecycle.HiltViewModel

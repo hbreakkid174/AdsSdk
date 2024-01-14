@@ -4,7 +4,7 @@ import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.example.module_ads.FullScreenDialog
+import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.presentation.AdMobViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -76,6 +76,7 @@ class InterstitialAdHelper @Inject constructor() {
                         releaseNormalInterstitialAd()
                         // Dismiss the full-screen dialog.
                         fullScreenDialog?.dismiss()
+                        fullScreenDialog=null
                         onAdDismissedFullScreenContent?.invoke()
                     }
 
@@ -84,6 +85,7 @@ class InterstitialAdHelper @Inject constructor() {
                         Log.e("TAG", "Ad failed to show fullscreen content.")
                         // Dismiss the full-screen dialog.
                         fullScreenDialog?.dismiss()
+                        fullScreenDialog=null
                         // Release the ad reference.
                         releaseNormalInterstitialAd()
                         // Invoke the callback with the error details.
@@ -101,6 +103,7 @@ class InterstitialAdHelper @Inject constructor() {
                         Log.d("TAG", "Ad showed fullscreen content.")
                         // Dismiss the full-screen dialog.
                         fullScreenDialog?.dismiss()
+                        fullScreenDialog=null
                         onAdShowedFullScreenContent?.invoke()
                     }
                 }

@@ -48,6 +48,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     api("com.google.android.gms:play-services-ads:22.6.0")
+    api("com.google.android.ump:user-messaging-platform:2.1.0")
 
     //lifecycle
     api("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")

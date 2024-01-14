@@ -2,11 +2,13 @@ package com.example.adssdk
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
 import com.example.module_ads.interstitial.InterstitialAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
+import com.example.module_ads.utils.initializeAdmobSdk
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -15,6 +17,9 @@ class MainActivity : AppCompatActivity() {
 
     private val adMobViewModel: AdMobViewModel by viewModels()
     private var binding: ActivityMainBinding? = null
+    companion object{
+        private var TAG = "MainActivity"
+    }
 
     @Inject
     lateinit var interstitialAdHelper: InterstitialAdHelper
@@ -22,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-
+        initializeAdmobSdk { Log.d(TAG, "onCreate: initializeAdmobSdk") }
         binding?.apply {
             loadAdButton.setOnClickListener {
                 adMobViewModel.loadNormalInterstitialAd(BuildConfig.ad_interstitial)
@@ -39,12 +44,12 @@ class MainActivity : AppCompatActivity() {
             }
 //            adMobViewModel.adMobAdState.observe(this@MainActivity) {
 //                when (it) {
-//                    is com.example.module_ads.AdMobAdState.AdFailedToLoad -> {
-//                        Log.d("TAG", "Ad Failed to load1")
+//                    is com.example.module_ads.utils.AdMobAdState.AdFailedToLoad -> {
+//                        Log.d(TAG, "Ad Failed to load1")
 //                    }
 //
-//                    is com.example.module_ads.AdMobAdState.AdLoaded -> {
-//                        Log.d("TAG", "Ad Loaded1")
+//                    is com.example.module_ads.utils.AdMobAdState.AdLoaded -> {
+//                        Log.d(TAG, "Ad Loaded1")
 //                        showAdButton.isEnabled = true
 //
 //                    }
