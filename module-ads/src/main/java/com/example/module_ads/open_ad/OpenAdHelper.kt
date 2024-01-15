@@ -16,8 +16,19 @@ class OpenAdHelper(private val activity: Context, private val adUnitId: String) 
     private var appOpenAdManager: AppOpenAdManager
     fun getAppOpenAdManager()=appOpenAdManager
 
+    companion object{
+        private var isAppOpen: Boolean = true
+        fun enableResumeAd(){
+            isAppOpen = true
+        }
+        fun disableResumeAd(){
+            isAppOpen = false
+        }
+    }
+
     init {
         appOpenAdManager = AppOpenAdManager()
+        enableResumeAd()
     }
 
     var isShowingAd = appOpenAdManager.isShowingAd
@@ -162,7 +173,7 @@ class OpenAdHelper(private val activity: Context, private val adUnitId: String) 
             if (!isAdAvailable()) {
                 debug("The app open ad is not ready yet.")
                 onShowAdCompleteListener.onShowAdComplete()
-                if (adsConsentManager?.canRequestAds == true) {
+                if (adsConsentManager.canRequestAds) {
                     loadAd(activity)
                 }
                 return
@@ -181,7 +192,7 @@ class OpenAdHelper(private val activity: Context, private val adUnitId: String) 
                         activity.toast("onAdDismissedFullScreenContent")
 
                         onShowAdCompleteListener.onShowAdComplete()
-                        if (adsConsentManager?.canRequestAds == true) {
+                        if (adsConsentManager.canRequestAds) {
                             loadAd(activity)
                         }
                     }
@@ -194,7 +205,7 @@ class OpenAdHelper(private val activity: Context, private val adUnitId: String) 
                         activity.toast("onAdFailedToShowFullScreenContent")
 
                         onShowAdCompleteListener.onShowAdComplete()
-                        if (adsConsentManager?.canRequestAds == true) {
+                        if (adsConsentManager.canRequestAds) {
                             loadAd(activity)
                         }
                     }
@@ -205,7 +216,12 @@ class OpenAdHelper(private val activity: Context, private val adUnitId: String) 
                         activity.toast("onAdShowedFullScreenContent")
                     }
                 }
+            if (!isAppOpen){
+                debug("open ad is disabled")
+                return
+            }
             isShowingAd = true
+
             appOpenAd?.show(activity)
         }
     }

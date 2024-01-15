@@ -39,7 +39,7 @@ android {
             buildConfigField ("String", "ad_reward", "\"ca-app-pub-3940256099942544/5224354917\"")
             buildConfigField ("String", "ad_reward_inter", "\"ca-app-pub-3940256099942544/5354046379\"")
             buildConfigField ("String", "ad_native", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField ("String", "ads_open_app", "\"ca-app-pub-3940256099942544/3419835294\"")
+            buildConfigField ("String", "ads_open_app", "\"ca-app-pub-3940256099942544/9257395921\"")
             buildConfigField ("Boolean", "env_dev", "true")
             // and add rest of ids as per requirements
 

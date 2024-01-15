@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import com.example.adssdk.databinding.ActivityTestScreenActivitiyBinding
 import com.example.module_ads.interstitial.InterstitialAdHelper
+import com.example.module_ads.open_ad.OpenAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -23,6 +24,7 @@ class TestScreenActivitiy : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTestScreenActivitiyBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+//        OpenAdHelper.enableResumeAd()
         binding?.apply {
             showAdButton.setOnClickListener {
                 interstitialAdHelper.showNormalInterstitialAd(

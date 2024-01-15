@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
 import com.example.module_ads.interstitial.InterstitialAdHelper
+import com.example.module_ads.open_ad.OpenAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.utils.initializeAdmobSdk
@@ -30,12 +31,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+//        OpenAdHelper.disableResumeAd()
         adsConsentManager = AdsConsentManager(this) {
-            initSdk()
+            if (adsConsentManager?.canRequestAds == true) {
+                initSdk()
+            }
         }
-        if (adsConsentManager?.canRequestAds == true) {
-            initSdk()
-        }
+
         binding?.apply {
             loadAdButton.setOnClickListener {
                 if (adsConsentManager?.canRequestAds == true) {
