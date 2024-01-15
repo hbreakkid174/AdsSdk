@@ -14,9 +14,12 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+        (application as MainApp).getAppOpenAdManager().loadAd(this)
+
         lifecycleScope.launchWhenResumed {
             delay(3000)
             startActivity(Intent(this@SplashScreen, MainActivity::class.java))
+            finish()
         }
     }
 }

@@ -53,6 +53,9 @@ dependencies {
     //lifecycle
     api("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    api("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    api("androidx.lifecycle:lifecycle-process:2.5.1")
+    kapt("androidx.lifecycle:lifecycle-compiler:2.5.1")
 
     api("androidx.activity:activity-ktx:1.8.2")
     api("androidx.fragment:fragment-ktx:1.6.2")
