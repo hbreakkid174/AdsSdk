@@ -59,6 +59,9 @@ class TestScreenActivitiy : AppCompatActivity() {
 
                     }
                     is AdMobAdState.AdNotAvailable->{
+                        bannerShimmerView.bannerShimmerView.visibility=View.GONE
+                        adViewContainer.visibility = View.GONE
+
 
                     }
                 }
