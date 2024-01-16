@@ -13,7 +13,7 @@ interface BannerAdRepository {
      * @param adUnitId The ad unit ID of the banner ad.
      * @param adLoadCallback Callback to handle ad loading events.
      */
-    fun loadBannerAd(adUnitId: String, adLoadCallback: AdLoadCallback)
+    fun loadBannerAd(adUnitId: String, adLoadCallback: BannerAdLoadCallback)
 
     /**
      * Returns the loaded banner ad if available.
@@ -27,17 +27,17 @@ interface BannerAdRepository {
      */
 
     fun destroyBannerAd()
-    interface AdLoadCallback {
+    interface BannerAdLoadCallback {
         /**
          * Callback triggered when the ad is successfully loaded.
          */
-        fun onAdLoaded()
+        fun onBannerAdLoaded()
 
         /**
          * Callback triggered when the ad fails to load.
          *
          * @param errorCode The error code indicating the reason for failure.
          */
-        fun onAdFailedToLoad(errorCode: Int)
+        fun onBannerAdFailedToLoad(errorCode: Int)
     }
 }

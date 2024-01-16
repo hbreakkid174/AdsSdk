@@ -37,15 +37,15 @@ class AdMobViewModel @Inject constructor(
         // Use the repository to load the ad and handle the callback.
         adMobRepository.loadNormalInterstitialAd(
             adUnitId,
-            object : InterstitialAdRepository.AdLoadCallback {
+            object : InterstitialAdRepository.InterstitialAdLoadCallback {
                 // Callback triggered when the ad is successfully loaded.
-                override fun onAdLoaded() {
+                override fun onInterstitialAdLoaded() {
                     // Update the LiveData with the loaded state.
                     _adMobAdState.value = AdMobAdState.AdLoaded
                 }
 
                 // Callback triggered when ad fails to load.
-                override fun onAdFailedToLoad(errorCode: Int) {
+                override fun onInterstitialAdFailedToLoad(errorCode: Int) {
                     // Update the LiveData with the failed to load state and error code.
                     _adMobAdState.value = AdMobAdState.AdFailedToLoad(errorCode)
                 }
@@ -74,15 +74,15 @@ class AdMobViewModel @Inject constructor(
      */
 
     fun loadBanner(adUnitId: String) {
-        bannerAdRepository.loadBannerAd(adUnitId, object : BannerAdRepository.AdLoadCallback {
+        bannerAdRepository.loadBannerAd(adUnitId, object : BannerAdRepository.BannerAdLoadCallback {
             // Callback triggered when the ad is successfully loaded.
-            override fun onAdLoaded() {
+            override fun onBannerAdLoaded() {
                 // Update the LiveData with the loaded state.
                 _adMobAdState.value = AdMobAdState.AdLoaded
             }
 
             // Callback triggered when ad fails to load.
-            override fun onAdFailedToLoad(errorCode: Int) {
+            override fun onBannerAdFailedToLoad(errorCode: Int) {
                 // Update the LiveData with the failed to load state and error code.
                 _adMobAdState.value = AdMobAdState.AdFailedToLoad(errorCode)
             }

@@ -13,7 +13,7 @@ interface InterstitialAdRepository {
      * @param adUnitId The ad unit ID to load the ad.
      * @param callback The callback to handle ad loading results.
      */
-    fun loadNormalInterstitialAd(adUnitId: String, callback: AdLoadCallback)
+    fun loadNormalInterstitialAd(adUnitId: String, callback: InterstitialAdLoadCallback)
 
     /**
      * Returns the instance of the loaded normal interstitial ad.
@@ -31,17 +31,17 @@ interface InterstitialAdRepository {
     /**
      * Callback interface to handle the results of ad loading.
      */
-    interface AdLoadCallback {
+    interface InterstitialAdLoadCallback {
         /**
          * Callback triggered when the ad is successfully loaded.
          */
-        fun onAdLoaded()
+        fun onInterstitialAdLoaded()
 
         /**
          * Callback triggered when the ad fails to load.
          *
          * @param errorCode The error code indicating the reason for failure.
          */
-        fun onAdFailedToLoad(errorCode: Int)
+        fun onInterstitialAdFailedToLoad(errorCode: Int)
     }
 }

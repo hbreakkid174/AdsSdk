@@ -1,7 +1,6 @@
 package com.example.module_ads.data
 
 import android.content.Context
-import android.util.Log
 import com.example.module_ads.domain.InterstitialAdRepository
 import com.example.module_ads.utils.debug
 import com.example.module_ads.utils.toast
@@ -33,7 +32,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
      */
     override fun loadNormalInterstitialAd(
         adUnitId: String,
-        callback: InterstitialAdRepository.AdLoadCallback
+        callback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
         // Request a new ad if one isn't already loaded.
         if (adIsLoading || normalInterstitialAd != null) {
@@ -60,7 +59,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
                     normalInterstitialAd = null
                     adIsLoading = false
                     // Invoke the callback with the error code.
-                    callback.onAdFailedToLoad(adError.code)
+                    callback.onInterstitialAdFailedToLoad(adError.code)
                 }
 
                 // Callback triggered when ad is successfully loaded.
@@ -71,7 +70,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
                     normalInterstitialAd = interstitialAd1
                     adIsLoading = false
                     // Invoke the callback indicating successful ad load.
-                    callback.onAdLoaded()
+                    callback.onInterstitialAdLoaded()
                 }
             })
 

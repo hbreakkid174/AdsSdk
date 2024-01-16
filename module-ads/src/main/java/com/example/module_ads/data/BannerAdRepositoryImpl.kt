@@ -26,7 +26,7 @@ class BannerAdRepositoryImpl @Inject constructor(private val context: Context) :
      * @param adUnitId The ad unit ID of the banner ad.
      * @param adLoadCallback Callback to handle ad loading events.
      */
-    override fun loadBannerAd(adUnitId: String, adLoadCallback: BannerAdRepository.AdLoadCallback) {
+    override fun loadBannerAd(adUnitId: String, adLoadCallback: BannerAdRepository.BannerAdLoadCallback) {
         // Initialize the AdView
         if (adView == null) {
             adView = AdView(context)
@@ -45,14 +45,14 @@ class BannerAdRepositoryImpl @Inject constructor(private val context: Context) :
                     // Code to be executed when an ad request fails.
                     debug("banner ad failed to load")
                     context.toast("banner ad failed to load")
-                    adLoadCallback.onAdFailedToLoad(adError.code)
+                    adLoadCallback.onBannerAdFailedToLoad(adError.code)
                 }
 
                 override fun onAdLoaded() {
                     // Code to be executed when an ad finishes loading.
                     debug("banner ad loaded")
                     context.toast("banner ad loaded")
-                    adLoadCallback.onAdLoaded()
+                    adLoadCallback.onBannerAdLoaded()
                 }
             }
         }
