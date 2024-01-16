@@ -43,5 +43,11 @@ interface InterstitialAdRepository {
          * @param errorCode The error code indicating the reason for failure.
          */
         fun onInterstitialAdFailedToLoad(errorCode: Int)
+        /**
+         * Callback triggered when the ad is not available means internet connection is not found
+         * App is purchased
+         *
+         */
+        fun onInterstitialAdNotAvailable()
     }
 }

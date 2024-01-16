@@ -30,7 +30,7 @@ fun debug(text: String) {
 }
 
 
-private fun Context.isNetworkAvailable(): Boolean {
+ fun Context.isNetworkAvailable(): Boolean {
     val connectivityManager =
         getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

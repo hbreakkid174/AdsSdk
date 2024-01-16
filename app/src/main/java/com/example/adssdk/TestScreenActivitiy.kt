@@ -54,6 +54,9 @@ class TestScreenActivitiy : AppCompatActivity() {
                         adViewContainer.addView(adMobViewModel.returnBannerView())
 
                     }
+                    is AdMobAdState.AdNotAvailable->{
+
+                    }
                 }
             }
         }

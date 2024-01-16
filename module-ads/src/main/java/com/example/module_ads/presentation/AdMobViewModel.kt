@@ -49,6 +49,10 @@ class AdMobViewModel @Inject constructor(
                     // Update the LiveData with the failed to load state and error code.
                     _adMobAdState.value = AdMobAdState.AdFailedToLoad(errorCode)
                 }
+                //callback triggered when the interstitial ad is not available
+                override fun onInterstitialAdNotAvailable() {
+                    _adMobAdState.value =AdMobAdState.AdNotAvailable
+                }
             })
     }
 
