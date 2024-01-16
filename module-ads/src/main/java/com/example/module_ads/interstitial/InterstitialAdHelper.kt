@@ -108,9 +108,7 @@ class InterstitialAdHelper @Inject constructor() {
                     override fun onAdShowedFullScreenContent() {
                         debug("Ad showed fullscreen content.")
                         activity.toast("Ad showed fullscreen content.")
-                        // Dismiss the full-screen dialog.
-                        fullScreenDialog?.dismiss()
-                        fullScreenDialog = null
+
                         onAdShowedFullScreenContent?.invoke()
                     }
                 }
