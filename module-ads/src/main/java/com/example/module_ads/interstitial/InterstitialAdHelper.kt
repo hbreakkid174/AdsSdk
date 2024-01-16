@@ -3,9 +3,8 @@ package com.example.module_ads.interstitial
 import android.app.Activity
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.presentation.AdMobViewModel
+import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.utils.debug
 import com.example.module_ads.utils.toast
 import com.google.android.gms.ads.AdError

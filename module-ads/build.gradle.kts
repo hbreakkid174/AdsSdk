@@ -60,6 +60,8 @@ dependencies {
     api("androidx.activity:activity-ktx:1.8.2")
     api("androidx.fragment:fragment-ktx:1.6.2")
 
+    //shimmer
+    api("com.facebook.shimmer:shimmer:0.5.0")
 
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.42")

@@ -39,6 +39,7 @@ class TestScreenActivitiy : AppCompatActivity() {
                     adMobViewModel
                 )
             }
+            bannerShimmerView.bannerShimmerView.visibility=View.VISIBLE
             if (adsConsentManager?.canRequestAds == true) {
 
                 adMobViewModel.loadBanner(BuildConfig.ad_banner)
@@ -47,10 +48,13 @@ class TestScreenActivitiy : AppCompatActivity() {
                 when (it) {
                     is AdMobAdState.AdFailedToLoad -> {
                         adViewContainer.visibility = View.GONE
+                        bannerShimmerView.bannerShimmerView.visibility=View.GONE
+
                     }
 
                     is AdMobAdState.AdLoaded -> {
                         adViewContainer.visibility = View.VISIBLE
+                        bannerShimmerView.bannerShimmerView.visibility=View.GONE
                         adViewContainer.addView(adMobViewModel.returnBannerView())
 
                     }
