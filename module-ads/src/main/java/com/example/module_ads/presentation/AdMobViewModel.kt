@@ -66,6 +66,7 @@ class AdMobViewModel @Inject constructor(
     fun releaseNormalInterstitialAd() {
         adMobRepository.releaseNormalInterstitialAd()
     }
+
     /**
      * Loads a banner ad with the specified [adUnitId].
      *
@@ -87,12 +88,20 @@ class AdMobViewModel @Inject constructor(
             }
         })
     }
+
     /**
      * Returns the instance of the loaded banner ad.
      *
      * @return The instance of the loaded banner ad, or null if not loaded.
      */
-    fun returnBannerView()= bannerAdRepository.returnBannerAd()
+    fun returnBannerView() = bannerAdRepository.returnBannerAd()
 
+    /**
+     * Releases the reference to the banner ad instance.
+     * This is typically done when the ad is no longer needed.
+     */
+    fun destroyBannerAd() {
+        bannerAdRepository.destroyBannerAd()
+    }
 
 }

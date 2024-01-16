@@ -21,6 +21,12 @@ interface BannerAdRepository {
      * @return The loaded AdView representing the banner ad, or null if not loaded.
      */
     fun returnBannerAd(): AdView?
+    /**
+     * Releases the reference to the banner ad instance.
+     * This is typically done when the ad is no longer needed.
+     */
+
+    fun destroyBannerAd()
     interface AdLoadCallback {
         /**
          * Callback triggered when the ad is successfully loaded.

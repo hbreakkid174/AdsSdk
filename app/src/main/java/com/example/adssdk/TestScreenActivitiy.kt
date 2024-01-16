@@ -10,6 +10,7 @@ import com.example.module_ads.interstitial.InterstitialAdHelper
 import com.example.module_ads.open_ad.OpenAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdMobAdState
+import com.example.module_ads.utils.AdsConsentManager
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,10 +23,14 @@ class TestScreenActivitiy : AppCompatActivity() {
 
     @Inject
     lateinit var interstitialAdHelper: InterstitialAdHelper
+    private var adsConsentManager: AdsConsentManager? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTestScreenActivitiyBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        adsConsentManager = AdsConsentManager(this) {}
 //        OpenAdHelper.enableResumeAd()
         binding?.apply {
             showAdButton.setOnClickListener {
@@ -34,15 +39,18 @@ class TestScreenActivitiy : AppCompatActivity() {
                     adMobViewModel
                 )
             }
-            adMobViewModel.loadBanner(BuildConfig.ad_banner)
+            if (adsConsentManager?.canRequestAds == true) {
+
+                adMobViewModel.loadBanner(BuildConfig.ad_banner)
+            }
             adMobViewModel.adMobAdState.observe(this@TestScreenActivitiy) {
                 when (it) {
                     is AdMobAdState.AdFailedToLoad -> {
-                       adViewContainer.visibility= View.GONE
+                        adViewContainer.visibility = View.GONE
                     }
 
                     is AdMobAdState.AdLoaded -> {
-                        adViewContainer.visibility= View.VISIBLE
+                        adViewContainer.visibility = View.VISIBLE
                         adViewContainer.addView(adMobViewModel.returnBannerView())
 
                     }
@@ -51,6 +59,25 @@ class TestScreenActivitiy : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onBackPressed() {
+        finish()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adMobViewModel.returnBannerView()?.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adMobViewModel.returnBannerView()?.resume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adMobViewModel.destroyBannerAd()
     }
 
 }

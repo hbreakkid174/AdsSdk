@@ -1,6 +1,9 @@
 package com.example.module_ads.utils
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import com.example.module_ads.BuildConfig
@@ -19,8 +22,29 @@ fun Context.toast(message: String) {
     }
 }
 
+
 fun debug(text: String) {
     if (BuildConfig.DEBUG) {
         Log.d("AdsModule", text)
+    }
+}
+
+
+private fun Context.isNetworkAvailable(): Boolean {
+    val connectivityManager =
+        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val networkCapabilities = connectivityManager.activeNetwork ?: return false
+        val networkInfo = connectivityManager.getNetworkCapabilities(networkCapabilities)
+
+        return networkInfo?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true ||
+                networkInfo?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true ||
+                networkInfo?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
+    } else {
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo?.type == ConnectivityManager.TYPE_WIFI ||
+                networkInfo?.type == ConnectivityManager.TYPE_ETHERNET ||
+                networkInfo?.type == ConnectivityManager.TYPE_MOBILE
     }
 }
