@@ -68,25 +68,25 @@ loadCollapsibleBanner()
         binding?.apply {
             if (adsConsentManager?.canRequestAds == true) {
 
-                adMobViewModel.loadCollapsibleBanner(BuildConfig.ad_banner_collapsible,adViewContainer,CollapsibleBannerPosition.BOTTOM)
+                adMobViewModel.loadCollapsibleBanner(BuildConfig.ad_banner_collapsible,bannerContainer,CollapsibleBannerPosition.BOTTOM)
             }
             adMobViewModel.adMobAdState.observe(this@MainActivity) {
                 when (it) {
                     is AdMobAdState.AdFailedToLoad -> {
-                        adViewContainer.removeAllViews()
-                        adViewContainer.visibility = View.GONE
+                        bannerContainer.removeAllViews()
+                        bannerContainer.visibility = View.GONE
 
                     }
 
                     is AdMobAdState.AdLoaded -> {
-                        adViewContainer.removeAllViews()
-                        adViewContainer.addView(adMobViewModel.returnBannerView())
+//                        bannerContainer.removeAllViews()
+                        bannerContainer.addView(adMobViewModel.returnBannerView())
 
                     }
 
                     is AdMobAdState.AdNotAvailable -> {
-                        adViewContainer.removeAllViews()
-                        adViewContainer.visibility = View.GONE
+                        bannerContainer.removeAllViews()
+                        bannerContainer.visibility = View.GONE
 
 
                     }

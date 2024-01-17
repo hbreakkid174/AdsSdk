@@ -140,22 +140,30 @@ class BannerAdRepositoryImpl @Inject constructor(private val context: Context) :
             adView?.setAdSize(getAdSize(view))
 
             // Create an ad request based on the collapsible banner position.
-            val adRequest = when (collapsibleBannerPosition) {
-                CollapsibleBannerPosition.TOP -> {
-                    AdRequest.Builder()
-                        .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
-                            putString("collapsible", "top")
-                        })
-                        .build()
-                }
-                CollapsibleBannerPosition.BOTTOM -> {
-                    AdRequest.Builder()
-                        .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
-                            putString("collapsible", "bottom")
-                        })
-                        .build()
-                }
-            }
+//            val adRequest = when (collapsibleBannerPosition) {
+//                CollapsibleBannerPosition.TOP -> {
+//                    AdRequest.Builder()
+//                        .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
+//                            putString("collapsible", "top")
+//                        })
+//                        .build()
+//                }
+//                CollapsibleBannerPosition.BOTTOM -> {
+//                    AdRequest.Builder()
+//                        .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
+//                            putString("collapsible", "bottom")
+//                        })
+//                        .build()
+//                }
+//            }
+            // Create an extra parameter that aligns the bottom of the expanded ad to
+            // the bottom of the bannerView.
+            val extras = Bundle()
+            extras.putString("collapsible", "bottom")
+
+            val adRequest = AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
+                .build()
 
             // Start loading the ad in the background.
             adView?.loadAd(adRequest)
