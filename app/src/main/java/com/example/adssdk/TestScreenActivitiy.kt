@@ -39,27 +39,24 @@ class TestScreenActivitiy : AppCompatActivity() {
                     adMobViewModel
                 )
             }
-            bannerShimmerView.bannerShimmerView.visibility=View.VISIBLE
             if (adsConsentManager?.canRequestAds == true) {
 
-                adMobViewModel.loadBanner(BuildConfig.ad_banner)
+                adMobViewModel.loadBanner(BuildConfig.ad_banner, adViewContainer)
             }
             adMobViewModel.adMobAdState.observe(this@TestScreenActivitiy) {
                 when (it) {
                     is AdMobAdState.AdFailedToLoad -> {
                         adViewContainer.visibility = View.GONE
-                        bannerShimmerView.bannerShimmerView.visibility=View.GONE
 
                     }
 
                     is AdMobAdState.AdLoaded -> {
-                        adViewContainer.visibility = View.VISIBLE
-                        bannerShimmerView.bannerShimmerView.visibility=View.GONE
+                        adViewContainer.removeAllViews()
                         adViewContainer.addView(adMobViewModel.returnBannerView())
 
                     }
-                    is AdMobAdState.AdNotAvailable->{
-                        bannerShimmerView.bannerShimmerView.visibility=View.GONE
+
+                    is AdMobAdState.AdNotAvailable -> {
                         adViewContainer.visibility = View.GONE
 
 
@@ -77,12 +74,12 @@ class TestScreenActivitiy : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        adMobViewModel.returnBannerView()?.pause()
+        adMobViewModel.pauseBannerAd()
     }
 
     override fun onResume() {
         super.onResume()
-        adMobViewModel.returnBannerView()?.resume()
+        adMobViewModel.resumeBannerAd()
     }
 
     override fun onDestroy() {

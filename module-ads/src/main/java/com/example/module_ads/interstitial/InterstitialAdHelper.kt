@@ -5,8 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.FullScreenDialog
-import com.example.module_ads.utils.debug
-import com.example.module_ads.utils.toast
+import com.example.module_ads.views.debug
+import com.example.module_ads.views.toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
 import javax.inject.Inject

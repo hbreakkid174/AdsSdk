@@ -3,11 +3,11 @@ package com.example.module_ads.utils
 import android.app.Activity
 import android.content.Context
 import androidx.fragment.app.Fragment
+import com.example.module_ads.views.debug
+import com.example.module_ads.views.toast
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.atomic.AtomicBoolean
-import javax.inject.Inject
 
 class InitializeAdmobSdk private constructor(private val context: Context) {
 

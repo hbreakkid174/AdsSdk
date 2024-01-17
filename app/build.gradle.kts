@@ -35,7 +35,8 @@ android {
 
             manifestPlaceholders ["ad_app_id"]= "ca-app-pub-3940256099942544~3347511713"
             buildConfigField("String", "ad_interstitial", "\"ca-app-pub-3940256099942544/1033173712\"")
-            buildConfigField("String", "ad_banner", "\"ca-app-pub-3940256099942544/6300978111\"")
+            buildConfigField("String", "ad_banner", "\"ca-app-pub-3940256099942544/9214589741\"")
+            buildConfigField("String", "ad_banner_collapsible", "\"ca-app-pub-3940256099942544/2014213617\"")
             buildConfigField ("String", "ad_reward", "\"ca-app-pub-3940256099942544/5224354917\"")
             buildConfigField ("String", "ad_reward_inter", "\"ca-app-pub-3940256099942544/5354046379\"")
             buildConfigField ("String", "ad_native", "\"ca-app-pub-3940256099942544/2247696110\"")
@@ -49,6 +50,7 @@ android {
             manifestPlaceholders ["ad_app_id"]= "ad your real ads id here"
             buildConfigField("String", "ad_interstitial", "\"ad your real ads id here\"")
             buildConfigField("String", "ad_banner", "\"ad your real ads id here\"")
+            buildConfigField("String", "ad_banner_collapsible", "\"ad your real ads id here\"")
             buildConfigField ("String", "ad_reward", "\"ad your real ads id here\"")
             buildConfigField ("String", "ad_reward_inter", "\"ad your real ads id here\"")
             buildConfigField ("String", "ad_native", "\"ad your real ads id here\"")

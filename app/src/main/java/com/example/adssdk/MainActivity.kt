@@ -3,12 +3,15 @@ package com.example.adssdk
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
+import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.interstitial.InterstitialAdHelper
 import com.example.module_ads.open_ad.OpenAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
+import com.example.module_ads.utils.AdMobAdState
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.utils.initializeAdmobSdk
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,21 +57,42 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, TestScreenActivitiy::class.java))
 
             }
-//            adMobViewModel.adMobAdState.observe(this@MainActivity) {
-//                when (it) {
-//                    is com.example.module_ads.utils.AdMobAdState.AdFailedToLoad -> {
-//                        Log.d(TAG, "Ad Failed to load1")
-//                    }
-//
-//                    is com.example.module_ads.utils.AdMobAdState.AdLoaded -> {
-//                        Log.d(TAG, "Ad Loaded1")
-//                        showAdButton.isEnabled = true
-//
-//                    }
-//                }
-//            }
+loadCollapsibleBanner()
         }
 
+
+    }
+
+    private fun loadCollapsibleBanner() {
+
+        binding?.apply {
+            if (adsConsentManager?.canRequestAds == true) {
+
+                adMobViewModel.loadCollapsibleBanner(BuildConfig.ad_banner_collapsible,adViewContainer,CollapsibleBannerPosition.BOTTOM)
+            }
+            adMobViewModel.adMobAdState.observe(this@MainActivity) {
+                when (it) {
+                    is AdMobAdState.AdFailedToLoad -> {
+                        adViewContainer.removeAllViews()
+                        adViewContainer.visibility = View.GONE
+
+                    }
+
+                    is AdMobAdState.AdLoaded -> {
+                        adViewContainer.removeAllViews()
+                        adViewContainer.addView(adMobViewModel.returnBannerView())
+
+                    }
+
+                    is AdMobAdState.AdNotAvailable -> {
+                        adViewContainer.removeAllViews()
+                        adViewContainer.visibility = View.GONE
+
+
+                    }
+                }
+            }
+        }
 
     }
 
@@ -76,5 +100,20 @@ class MainActivity : AppCompatActivity() {
         initializeAdmobSdk {
             Log.d(TAG, "onCreate: initializeAdmobSdk")
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adMobViewModel.destroyBannerAd()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adMobViewModel.pauseBannerAd()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adMobViewModel.resumeBannerAd()
     }
 }

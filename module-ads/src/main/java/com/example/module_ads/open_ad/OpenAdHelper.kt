@@ -3,8 +3,8 @@ package com.example.module_ads.open_ad
 import android.app.Activity
 import android.content.Context
 import com.example.module_ads.utils.GoogleMobileAdsConsentManager
-import com.example.module_ads.utils.debug
-import com.example.module_ads.utils.toast
+import com.example.module_ads.views.debug
+import com.example.module_ads.views.toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback

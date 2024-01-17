@@ -1,9 +1,7 @@
 package com.example.module_ads.utils
 
 import android.app.Activity
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
+import com.example.module_ads.views.debug
 
 class AdsConsentManager(private val context: Activity,onConsentFound:()->Unit) {
     private var googleMobileAdsConsentManager: GoogleMobileAdsConsentManager =

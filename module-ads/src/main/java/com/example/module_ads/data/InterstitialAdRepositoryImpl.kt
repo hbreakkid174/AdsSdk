@@ -2,9 +2,9 @@ package com.example.module_ads.data
 
 import android.content.Context
 import com.example.module_ads.domain.InterstitialAdRepository
-import com.example.module_ads.utils.debug
-import com.example.module_ads.utils.isNetworkAvailable
-import com.example.module_ads.utils.toast
+import com.example.module_ads.views.debug
+import com.example.module_ads.views.isNetworkAvailable
+import com.example.module_ads.views.toast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd

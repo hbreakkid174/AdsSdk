@@ -34,4 +34,25 @@
         android:text="Next"
         app:layout_constraintStart_toEndOf="@+id/showAdButton"
         app:layout_constraintTop_toTopOf="parent" />
+    <FrameLayout
+        android:id="@+id/ad_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="70dp"
+        app:layout_constraintStart_toStartOf="parent" >
+        <include
+            android:id="@+id/bannerShimmerView"
+            layout="@layout/banner_shimmer_effect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="70dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="70dp"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

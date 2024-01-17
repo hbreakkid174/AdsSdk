@@ -1,4 +1,4 @@
-package com.example.module_ads.utils
+package com.example.module_ads.views
 
 import android.content.Context
 import android.graphics.Canvas
