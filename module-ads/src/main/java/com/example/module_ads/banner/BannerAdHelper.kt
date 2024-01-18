@@ -33,13 +33,17 @@ class BannerAdHelper @Inject constructor() : LifecycleObserver {
     fun loadBannerAds(
         activity: Activity?,
         bannerContainerView: FrameLayout,
-        adUnitId: String,
+        adUnitId: String?,
         collapsibleBannerPosition: CollapsibleBannerPosition = CollapsibleBannerPosition.NONE
     ) {
         activity?.let { mActivity ->
             try {
                 if (!mActivity.isNetworkAvailable()) {
                     debug("No internet connection found")
+                    return
+                }
+                if (adUnitId.isNullOrEmpty()) {
+                    debug("Ad unit ID is null or empty")
                     return
                 }
 
@@ -52,31 +56,11 @@ class BannerAdHelper @Inject constructor() : LifecycleObserver {
                     adView?.adUnitId = adUnitId
                     adView?.setAdSize(getAdSize(mActivity, bannerContainerView))
 
-                    // Build the AdRequest based on the collapsible banner position
-                    val adRequest: AdRequest = when (collapsibleBannerPosition) {
-                        CollapsibleBannerPosition.NONE -> {
-                            AdRequest.Builder().build()
-                        }
 
-                        CollapsibleBannerPosition.BOTTOM -> {
-                            AdRequest.Builder()
-                                .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
-                                    putString("collapsible", "bottom")
-                                })
-                                .build()
-                        }
 
-                        CollapsibleBannerPosition.TOP -> {
-                            AdRequest.Builder()
-                                .addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
-                                    putString("collapsible", "top")
-                                })
-                                .build()
-                        }
-                    }
 
                     // Load the ad and set up the ad listener
-                    adView?.loadAd(adRequest)
+                    adView?.loadAd(buildAdRequest(collapsibleBannerPosition))
                     adView?.adListener = object : AdListener() {
                         override fun onAdLoaded() {
                             debug("Banner ad loaded")
@@ -108,6 +92,25 @@ class BannerAdHelper @Inject constructor() : LifecycleObserver {
                 // Handle exceptions, hide views if there is an issue
                 bannerContainerView.removeAllViews()
                 bannerContainerView.visibility = View.GONE
+            }
+        }
+    }
+
+    /**
+     *  Build the AdRequest based on the collapsible banner position
+     */
+    private fun buildAdRequest(collapsibleBannerPosition: CollapsibleBannerPosition): AdRequest {
+        return when (collapsibleBannerPosition) {
+            CollapsibleBannerPosition.NONE -> AdRequest.Builder().build()
+            CollapsibleBannerPosition.BOTTOM -> {
+                AdRequest.Builder().addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
+                    putString("collapsible", "bottom")
+                }).build()
+            }
+            CollapsibleBannerPosition.TOP -> {
+                AdRequest.Builder().addNetworkExtrasBundle(AdMobAdapter::class.java, Bundle().apply {
+                    putString("collapsible", "top")
+                }).build()
             }
         }
     }
