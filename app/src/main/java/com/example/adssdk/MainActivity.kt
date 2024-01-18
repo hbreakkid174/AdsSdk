@@ -3,15 +3,13 @@ package com.example.adssdk
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
+import com.example.module_ads.banner.BannerAdHelper
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.interstitial.InterstitialAdHelper
-import com.example.module_ads.open_ad.OpenAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
-import com.example.module_ads.utils.AdMobAdState
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.utils.initializeAdmobSdk
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +21,11 @@ class MainActivity : AppCompatActivity() {
     private val adMobViewModel: AdMobViewModel by viewModels()
     private var binding: ActivityMainBinding? = null
 
+    @Inject
+    lateinit var bannerAdHelper: BannerAdHelper
+
+    @Inject
+    lateinit var admobBannerAds: BannerAdHelper
     companion object {
         private var TAG = "MainActivity"
     }
@@ -57,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, TestScreenActivitiy::class.java))
 
             }
-loadCollapsibleBanner()
+            loadCollapsibleBanner()
         }
 
 
@@ -67,34 +70,22 @@ loadCollapsibleBanner()
 
         binding?.apply {
             if (adsConsentManager?.canRequestAds == true) {
+                lifecycle.addObserver(bannerAdHelper)
 
-                adMobViewModel.loadCollapsibleBanner(BuildConfig.ad_banner_collapsible,bannerContainer,CollapsibleBannerPosition.BOTTOM)
+
+                admobBannerAds.loadBannerAds(
+                    this@MainActivity,
+                    adViewContainer,
+                    BuildConfig.ad_banner_collapsible,
+                    CollapsibleBannerPosition.BOTTOM
+                    )
             }
-            adMobViewModel.adMobAdState.observe(this@MainActivity) {
-                when (it) {
-                    is AdMobAdState.AdFailedToLoad -> {
-                        bannerContainer.removeAllViews()
-                        bannerContainer.visibility = View.GONE
-
-                    }
-
-                    is AdMobAdState.AdLoaded -> {
-//                        bannerContainer.removeAllViews()
-                        bannerContainer.addView(adMobViewModel.returnBannerView())
-
-                    }
-
-                    is AdMobAdState.AdNotAvailable -> {
-                        bannerContainer.removeAllViews()
-                        bannerContainer.visibility = View.GONE
 
 
-                    }
-                }
-            }
         }
 
     }
+
 
     private fun initSdk() {
         initializeAdmobSdk {
@@ -102,18 +93,5 @@ loadCollapsibleBanner()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        adMobViewModel.destroyBannerAd()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        adMobViewModel.pauseBannerAd()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adMobViewModel.resumeBannerAd()
-    }
 }
