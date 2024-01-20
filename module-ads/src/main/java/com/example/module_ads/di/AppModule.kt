@@ -2,9 +2,9 @@ package com.example.module_ads.di
 
 import android.content.Context
 import com.example.module_ads.data.BannerAdRepositoryImpl
-import com.example.module_ads.domain.InterstitialAdRepository
+import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.data.InterstitialAdRepositoryImpl
-import com.example.module_ads.domain.BannerAdRepository
+import com.example.module_ads.domain.repositories.BannerAdRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

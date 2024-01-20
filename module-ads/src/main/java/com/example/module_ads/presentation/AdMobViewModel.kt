@@ -7,12 +7,14 @@ import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.module_ads.domain.BannerAdRepository
-import com.example.module_ads.domain.InterstitialAdRepository
+import com.example.module_ads.domain.repositories.BannerAdRepository
+import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.adstates.BannerAdState
 import com.example.module_ads.adstates.CollapsibleBannerAdState
 import com.example.module_ads.adstates.InterstitialAdState
+import com.example.module_ads.domain.usecases.BannerAdUseCase
+import com.example.module_ads.domain.usecases.InterstitialAdUseCase
 import com.google.android.gms.ads.AdError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,13 +22,14 @@ import javax.inject.Inject
 /**
  * ViewModel responsible for managing the state of AdMob interstitial ads.
  *
- * @property adMobRepository The repository handling AdMob interstitial ad operations.
+ * @property interstitialAdUseCase The use case handling AdMob interstitial ad operations.
+ * @property bannerAdUseCase The use case handling AdMob banner ad operations.
  * @constructor Injected constructor to provide dependencies.
  */
 @HiltViewModel
 class AdMobViewModel @Inject constructor(
-    private val adMobRepository: InterstitialAdRepository,
-    private val bannerAdRepository: BannerAdRepository,
+    private val interstitialAdUseCase: InterstitialAdUseCase,
+    private val bannerAdUseCase: BannerAdUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -50,7 +53,7 @@ class AdMobViewModel @Inject constructor(
      */
     fun loadNormalInterstitialAd(adUnitId: String) {
         // Use the repository to load the ad and handle the callback.
-        adMobRepository.loadNormalInterstitialAd(
+        interstitialAdUseCase.loadNormalInterstitialAd(
             adUnitId,
             object : InterstitialAdRepository.InterstitialAdLoadCallback {
                 // Callback triggered when the ad is successfully loaded.
@@ -77,14 +80,14 @@ class AdMobViewModel @Inject constructor(
      *
      * @return The instance of the loaded interstitial ad, or null if not loaded.
      */
-    fun returnNormalInterstitialAd() = adMobRepository.returnNormalInterstitialAd()
+    fun returnNormalInterstitialAd() = interstitialAdUseCase.returnNormalInterstitialAd()
 
     /**
      * Releases the reference to the normal interstitial ad instance.
      * This is typically done when the ad is no longer needed.
      */
     fun releaseNormalInterstitialAd() {
-        adMobRepository.releaseNormalInterstitialAd()
+        interstitialAdUseCase.releaseNormalInterstitialAd()
     }
 
     /**
@@ -94,7 +97,7 @@ class AdMobViewModel @Inject constructor(
      */
 
     fun loadBanner(context: Context, adUnitId: String, view: View) {
-        bannerAdRepository.loadBannerAd(
+        bannerAdUseCase.loadBannerAd(
             context,
             adUnitId,
             view,
@@ -132,7 +135,7 @@ class AdMobViewModel @Inject constructor(
         collapsibleBannerPosition: CollapsibleBannerPosition
     ) {
         // Load the collapsible banner using the bannerAdRepository.
-        bannerAdRepository.loadCollapsibleBanner(
+        bannerAdUseCase.loadCollapsibleBanner(
             context,
             adUnitId,
             view,
@@ -166,17 +169,17 @@ class AdMobViewModel @Inject constructor(
      *
      * @return The instance of the loaded banner ad, or null if not loaded.
      */
-    fun returnBannerAdView() = bannerAdRepository.returnBannerAd()
+    fun returnBannerAdView() = bannerAdUseCase.returnBannerAd()
 
     /**
      * Returns the instance of the loaded collapsible banner ad.
      *
      * @return The instance of the loaded collapsible banner ad, or null if not loaded.
      */
-    fun returnCollapsedBannerAdView() = bannerAdRepository.returnCollapsedBannerAd()
+    fun returnCollapsedBannerAdView() = bannerAdUseCase.returnCollapsedBannerAd()
 
     fun showNormalInterstitialAd(activity: Activity) {
-        adMobRepository.showNormalInterstitialAd(activity,
+        interstitialAdUseCase.showNormalInterstitialAd(activity,
             object : InterstitialAdRepository.InterstitialAdLoadCallback {
                 override fun onInterstitialAdNotAvailable() {
                     _interstitialAdState.value = InterstitialAdState.AdNotAvailable

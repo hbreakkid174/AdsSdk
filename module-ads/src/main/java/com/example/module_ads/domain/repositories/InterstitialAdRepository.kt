@@ -1,7 +1,6 @@
-package com.example.module_ads.domain
+package com.example.module_ads.domain.repositories
 
 import android.app.Activity
-import com.example.module_ads.presentation.AdMobViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 
@@ -30,7 +29,12 @@ interface InterstitialAdRepository {
      * This is typically done when the ad is no longer needed.
      */
     fun releaseNormalInterstitialAd()
-
+    /**
+     * Shows a normal interstitial ad.
+     *
+     * @param activity The activity where the ad will be displayed.
+     * @param interstitialAdLoadCallback The callback to handle interstitialAd results.
+     */
     fun showNormalInterstitialAd(activity: Activity,interstitialAdLoadCallback: InterstitialAdLoadCallback)
 
     /**

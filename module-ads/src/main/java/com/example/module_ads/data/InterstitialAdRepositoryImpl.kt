@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import com.example.module_ads.domain.InterstitialAdRepository
+import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.views.debug
 import com.example.module_ads.views.isNetworkAvailable
@@ -50,6 +50,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
         }
         // Request a new ad if one isn't already loaded.
         if (adIsLoading || normalInterstitialAd != null) {
+            debug("already loaded normalInterstitialAd")
             return
         }
         adIsLoading = true
@@ -106,10 +107,11 @@ class InterstitialAdRepositoryImpl @Inject constructor(
      * Shows a normal interstitial ad.
      *
      * @param activity The activity where the ad will be displayed.
+     * @param interstitialAdLoadCallback The callback to handle interstitialAd results.
      */
     override fun showNormalInterstitialAd(
         activity: Activity,
-        callback: InterstitialAdRepository.InterstitialAdLoadCallback
+        interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
 // Check if a normal interstitial ad is loaded.
         if (normalInterstitialAd != null) {
@@ -123,7 +125,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
             }, 1000)
 
         } else {
-            callback.onInterstitialAdNotAvailable()
+            interstitialAdLoadCallback.onInterstitialAdNotAvailable()
         }
 
         // Set the full-screen content callback for the interstitial ad.
@@ -133,7 +135,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
                 override fun onAdClicked() {
                     debug("Ad was clicked.")
                     activity.toast("Ad was clicked.")
-                    callback.onInterstitialAdClicked()
+                    interstitialAdLoadCallback.onInterstitialAdClicked()
                 }
 
                 // Callback triggered when ad is dismissed.
@@ -145,7 +147,7 @@ class InterstitialAdRepositoryImpl @Inject constructor(
                     // Dismiss the full-screen dialog.
                     fullScreenDialog?.dismiss()
                     fullScreenDialog = null
-                    callback.onInterstitialAdDismissed()
+                    interstitialAdLoadCallback.onInterstitialAdDismissed()
                 }
 
                 // Callback triggered when ad fails to show.
@@ -157,21 +159,21 @@ class InterstitialAdRepositoryImpl @Inject constructor(
                     fullScreenDialog = null
                     // Release the ad reference.
                     normalInterstitialAd = null
-                    callback.onInterstitialAdFailedToShowFullScreenContent(adError)
+                    interstitialAdLoadCallback.onInterstitialAdFailedToShowFullScreenContent(adError)
                 }
 
                 // Callback triggered when an impression is recorded.
                 override fun onAdImpression() {
                     debug("Ad recorded an impression.")
                     activity.toast("Ad recorded an impression.")
-                    callback.onInterstitialAdImpression()
+                    interstitialAdLoadCallback.onInterstitialAdImpression()
                 }
 
                 // Callback triggered when the ad is shown.
                 override fun onAdShowedFullScreenContent() {
                     debug("Ad showed fullscreen content.")
                     activity.toast("Ad showed fullscreen content.")
-                    callback.onInterstitialAdShowed()
+                    interstitialAdLoadCallback.onInterstitialAdShowed()
 
                 }
             }

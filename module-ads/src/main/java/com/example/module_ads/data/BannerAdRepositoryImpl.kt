@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.example.module_ads.domain.BannerAdRepository
+import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.utils.CollapsedAdViewLifecycleObserver
 import com.example.module_ads.views.debug

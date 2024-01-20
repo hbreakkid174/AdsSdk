@@ -1,4 +1,4 @@
-package com.example.module_ads.domain
+package com.example.module_ads.domain.repositories
 
 import android.content.Context
 import android.view.View
