@@ -4,8 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import com.example.module_ads.BuildConfig
+import com.google.android.gms.ads.AdView
 
 private var toast: Toast? = null
 
@@ -39,4 +43,22 @@ fun debug(text: String) {
     return networkInfo?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true ||
             networkInfo?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true ||
             networkInfo?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
+}
+
+ fun displayBannerAd(adsPlaceHolder: FrameLayout,adaptiveAdView:AdView?) {
+    try {
+        if (adaptiveAdView != null) {
+            val viewGroup: ViewGroup? = adaptiveAdView.parent as ViewGroup?
+            viewGroup?.removeView(adaptiveAdView)
+
+            adsPlaceHolder.removeAllViews()
+            adsPlaceHolder.addView(adaptiveAdView)
+        } else {
+            adsPlaceHolder.removeAllViews()
+            adsPlaceHolder.visibility = View.GONE
+        }
+    } catch (ex: Exception) {
+       ex.printStackTrace()
+    }
+
 }

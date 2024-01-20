@@ -3,15 +3,17 @@ package com.example.adssdk
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
-import com.example.module_ads.banner.BannerAdHelper
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.interstitial.InterstitialAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
+import com.example.module_ads.utils.AdMobAdState
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.utils.initializeAdmobSdk
+import com.example.module_ads.views.displayBannerAd
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,11 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val adMobViewModel: AdMobViewModel by viewModels()
     private var binding: ActivityMainBinding? = null
 
-    @Inject
-    lateinit var bannerAdHelper: BannerAdHelper
 
-    @Inject
-    lateinit var admobBannerAds: BannerAdHelper
     companion object {
         private var TAG = "MainActivity"
     }
@@ -70,15 +68,26 @@ class MainActivity : AppCompatActivity() {
 
         binding?.apply {
             if (adsConsentManager?.canRequestAds == true) {
-                lifecycle.addObserver(bannerAdHelper)
-
-
-                admobBannerAds.loadBannerAds(
+                adMobViewModel.loadCollapsibleBanner(
                     this@MainActivity,
-                    adViewContainer,
-                    BuildConfig.ad_banner_collapsible,
+                    BuildConfig.ad_banner_collapsible, adViewContainer,
                     CollapsibleBannerPosition.BOTTOM
-                    )
+                )
+                adMobViewModel.adMobAdState.observe(this@MainActivity) {
+                    when (it) {
+                        is AdMobAdState.AdLoaded -> {
+                           displayBannerAd(adViewContainer,adMobViewModel.returnCollapsedBannerAdView())
+                        }
+
+                        is AdMobAdState.AdFailedToLoad -> {
+                            adViewContainer.visibility = View.GONE
+                        }
+
+                        is AdMobAdState.AdNotAvailable -> {
+                            adViewContainer.visibility = View.GONE
+                        }
+                    }
+                }
             }
 
 

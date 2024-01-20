@@ -1,13 +1,15 @@
 package com.example.adssdk
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityTestScreenActivitiyBinding
-import com.example.module_ads.banner.BannerAdHelper
 import com.example.module_ads.interstitial.InterstitialAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
+import com.example.module_ads.utils.AdMobAdState
 import com.example.module_ads.utils.AdsConsentManager
+import com.example.module_ads.views.displayBannerAd
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -19,9 +21,6 @@ class TestScreenActivitiy : AppCompatActivity() {
     @Inject
     lateinit var interstitialAdHelper: InterstitialAdHelper
     private var adsConsentManager: AdsConsentManager? = null
-
-    @Inject
-    lateinit var bannerAdHelper: BannerAdHelper
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,12 +37,27 @@ class TestScreenActivitiy : AppCompatActivity() {
                 )
             }
             if (adsConsentManager?.canRequestAds == true) {
-                lifecycle.addObserver(bannerAdHelper)
-                bannerAdHelper.loadBannerAds(
+                adMobViewModel.loadBanner(
                     this@TestScreenActivitiy,
-                    adViewContainer,
-                    BuildConfig.ad_banner
+                    BuildConfig.ad_banner, adViewContainer
                 )
+                adMobViewModel.adMobAdState.observe(this@TestScreenActivitiy) {
+                    when (it) {
+                        is AdMobAdState.AdLoaded -> {
+                            displayBannerAd(adViewContainer,adMobViewModel.returnBannerAdView())
+
+                        }
+
+                        is AdMobAdState.AdFailedToLoad -> {
+                            adViewContainer.visibility = View.GONE
+                        }
+
+                        is AdMobAdState.AdNotAvailable -> {
+                            adViewContainer.visibility = View.GONE
+                        }
+                    }
+                }
+
             }
         }
 

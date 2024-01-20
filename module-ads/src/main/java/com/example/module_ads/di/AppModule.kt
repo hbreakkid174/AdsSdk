@@ -1,8 +1,10 @@
 package com.example.module_ads.di
 
 import android.content.Context
+import com.example.module_ads.data.BannerAdRepositoryImpl
 import com.example.module_ads.domain.InterstitialAdRepository
 import com.example.module_ads.data.InterstitialAdRepositoryImpl
+import com.example.module_ads.domain.BannerAdRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,5 +39,14 @@ object AppModule {
     fun provideAdMobRepository(context: Context): InterstitialAdRepository {
         return InterstitialAdRepositoryImpl(context)
     }
-
+    /**
+     * Provides the implementation of [BannerAdRepository] for AdMob banner ads.
+     *
+     * @return The implementation of [BannerAdRepository].
+     */
+    @Provides
+    @Singleton
+    fun provideBannerAdRepository(): BannerAdRepository {
+        return BannerAdRepositoryImpl()
+    }
 }
