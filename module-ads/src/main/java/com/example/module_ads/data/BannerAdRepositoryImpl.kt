@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.example.module_ads.domain.BannerAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
+import com.example.module_ads.utils.CollapsedAdViewLifecycleObserver
 import com.example.module_ads.views.debug
 import com.example.module_ads.views.isNetworkAvailable
 import com.example.module_ads.views.toast
@@ -47,6 +48,9 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository, Lifecyc
             isObserverRegistered = true
         }
     }
+
+    // LifecycleObserver for the collapsedAdView
+    private var collapsedAdViewLifecycleObserver: CollapsedAdViewLifecycleObserver? = null
 
     // AdView variables for the main banner and collapsible banner
     private var adView: AdView? = null
@@ -152,6 +156,7 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository, Lifecyc
      * @return The loaded AdView representing the banner ad, or null if not loaded.
      */
     override fun returnBannerAd(): AdView? = adView
+
     /**
      * Returns the loaded collapsed banner ad if available.
      *
@@ -176,8 +181,7 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository, Lifecyc
         collapsibleBannerPosition: CollapsibleBannerPosition,
         adLoadCallback: BannerAdRepository.BannerAdLoadCallback
     ) {
-        this.context = WeakReference(context)
-        registerLifeCycleObserver()
+
 
         // Check if the network is available before attempting to load the banner ad.
         if (!context.isNetworkAvailable()) {
@@ -189,6 +193,18 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository, Lifecyc
         // Initialize the AdView if it hasn't been initialized yet.
         if (collapsedAdView == null) {
             collapsedAdView = AdView(context)
+
+            // Initialize the collapsedAdViewLifecycleObserver
+            collapsedAdViewLifecycleObserver = CollapsedAdViewLifecycleObserver(collapsedAdView) {
+                collapsedAdView = null
+            }
+
+            // Get the lifecycle of the associated component (e.g., activity)
+            val lifecycle = (context as? LifecycleOwner)?.lifecycle
+
+            // Attach the observer to the lifecycle
+            lifecycle?.addObserver(collapsedAdViewLifecycleObserver ?: return)
+
 
             // Set the ad unit ID and ad size for the AdView.
             collapsedAdView?.adUnitId = adUnitId
@@ -252,19 +268,18 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository, Lifecyc
     fun onResume() {
         debug("resuming banner ad")
         adView?.resume()
-        collapsedAdView?.resume()
     }
+
     /**
      * Pauses the banner ad when the corresponding lifecycle event is triggered.
      */
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
         debug("pausing banner ad")
-        isObserverRegistered = false
 
         adView?.pause()
-        collapsedAdView?.pause()
     }
+
     /**
      * Destroys the banner ad when the corresponding lifecycle event is triggered.
      */
@@ -272,9 +287,8 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository, Lifecyc
     fun onDestroy() {
         debug("destroying banner ad")
         adView?.destroy()
-        collapsedAdView?.destroy()
         adView = null
-        collapsedAdView = null
+
         isObserverRegistered = false
 
         // Clean up and remove the observer from the lifecycle
