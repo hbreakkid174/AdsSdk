@@ -1,5 +1,6 @@
 package com.example.module_ads.presentation
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.view.View
@@ -9,7 +10,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.module_ads.domain.BannerAdRepository
 import com.example.module_ads.domain.InterstitialAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
-import com.example.module_ads.utils.AdMobAdState
+import com.example.module_ads.adstates.BannerAdState
+import com.example.module_ads.adstates.CollapsibleBannerAdState
+import com.example.module_ads.adstates.InterstitialAdState
+import com.google.android.gms.ads.AdError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -26,10 +30,18 @@ class AdMobViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    // LiveData to observe the state of AdMob interstitial ads.
-    private val _adMobAdState = MutableLiveData<AdMobAdState>()
-    val adMobAdState: LiveData<AdMobAdState> get() = _adMobAdState
 
+    // LiveData to observe the state of AdMob interstitial ads.
+    private val _interstitialAdState = MutableLiveData<InterstitialAdState>()
+    val interstitialAdState: LiveData<InterstitialAdState> get() = _interstitialAdState
+
+    // LiveData to observe the state of AdMob banner ads.
+    private val _bannerAdState = MutableLiveData<BannerAdState>()
+    val bannerAdState: LiveData<BannerAdState> get() = _bannerAdState
+
+    // LiveData to observe the state of AdMob collapsible banner ads.
+    private val _collapsibleBannerAdState = MutableLiveData<CollapsibleBannerAdState>()
+    val collapsibleBannerAdState: LiveData<CollapsibleBannerAdState> get() = _collapsibleBannerAdState
 
     /**
      * Loads a normal interstitial ad with the specified [adUnitId].
@@ -44,18 +56,18 @@ class AdMobViewModel @Inject constructor(
                 // Callback triggered when the ad is successfully loaded.
                 override fun onInterstitialAdLoaded() {
                     // Update the LiveData with the loaded state.
-                    _adMobAdState.value = AdMobAdState.AdLoaded
+                    _interstitialAdState.value = InterstitialAdState.AdLoaded
                 }
 
                 // Callback triggered when ad fails to load.
                 override fun onInterstitialAdFailedToLoad(errorCode: Int) {
                     // Update the LiveData with the failed to load state and error code.
-                    _adMobAdState.value = AdMobAdState.AdFailedToLoad(errorCode)
+                    _interstitialAdState.value = InterstitialAdState.AdFailedToLoad(errorCode)
                 }
 
                 //callback triggered when the interstitial ad is not available
                 override fun onInterstitialAdNotAvailable() {
-                    _adMobAdState.value = AdMobAdState.AdNotAvailable
+                    _interstitialAdState.value = InterstitialAdState.AdNotAvailable
                 }
             })
     }
@@ -74,6 +86,7 @@ class AdMobViewModel @Inject constructor(
     fun releaseNormalInterstitialAd() {
         adMobRepository.releaseNormalInterstitialAd()
     }
+
     /**
      * Loads a banner ad with the specified [adUnitId].
      *
@@ -89,18 +102,18 @@ class AdMobViewModel @Inject constructor(
                 // Callback triggered when the ad is successfully loaded.
                 override fun onBannerAdLoaded() {
                     // Update the LiveData with the loaded state.
-                    _adMobAdState.value = AdMobAdState.AdLoaded
+                    _bannerAdState.value = BannerAdState.AdLoaded
                 }
 
                 // Callback triggered when ad fails to load.
                 override fun onBannerAdFailedToLoad(errorCode: Int) {
                     // Update the LiveData with the failed to load state and error code.
-                    _adMobAdState.value = AdMobAdState.AdFailedToLoad(errorCode)
+                    _bannerAdState.value = BannerAdState.AdFailedToLoad(errorCode)
                 }
 
                 //callback triggered when the banner ad is not available
                 override fun onBannerAdNotAvailable() {
-                    _adMobAdState.value = AdMobAdState.AdNotAvailable
+                    _bannerAdState.value = BannerAdState.AdNotAvailable
                 }
             })
     }
@@ -128,19 +141,20 @@ class AdMobViewModel @Inject constructor(
                 // Callback triggered when the ad is successfully loaded.
                 override fun onBannerAdLoaded() {
                     // Update the LiveData with the loaded state.
-                    _adMobAdState.value = AdMobAdState.AdLoaded
+                    _collapsibleBannerAdState.value = CollapsibleBannerAdState.AdLoaded
                 }
 
                 // Callback triggered when ad fails to load.
                 override fun onBannerAdFailedToLoad(errorCode: Int) {
                     // Update the LiveData with the failed to load state and error code.
-                    _adMobAdState.value = AdMobAdState.AdFailedToLoad(errorCode)
+                    _collapsibleBannerAdState.value =
+                        CollapsibleBannerAdState.AdFailedToLoad(errorCode)
                 }
 
                 // Callback triggered when the banner ad is not available.
                 override fun onBannerAdNotAvailable() {
                     // Update the LiveData with the ad not available state.
-                    _adMobAdState.value = AdMobAdState.AdNotAvailable
+                    _collapsibleBannerAdState.value = CollapsibleBannerAdState.AdNotAvailable
                 }
             }
         )
@@ -153,12 +167,44 @@ class AdMobViewModel @Inject constructor(
      * @return The instance of the loaded banner ad, or null if not loaded.
      */
     fun returnBannerAdView() = bannerAdRepository.returnBannerAd()
+
+    /**
+     * Returns the instance of the loaded collapsible banner ad.
+     *
+     * @return The instance of the loaded collapsible banner ad, or null if not loaded.
+     */
     fun returnCollapsedBannerAdView() = bannerAdRepository.returnCollapsedBannerAd()
 
+    fun showNormalInterstitialAd(activity: Activity) {
+        adMobRepository.showNormalInterstitialAd(activity,
+            object : InterstitialAdRepository.InterstitialAdLoadCallback {
+                override fun onInterstitialAdNotAvailable() {
+                    _interstitialAdState.value = InterstitialAdState.AdNotAvailable
+                }
 
+                override fun onInterstitialAdShowed() {
+                    _interstitialAdState.value = InterstitialAdState.AdShowed
+                }
 
+                override fun onInterstitialAdClicked() {
+                    _interstitialAdState.value = InterstitialAdState.AdClicked
+                }
 
+                override fun onInterstitialAdDismissed() {
+                    _interstitialAdState.value = InterstitialAdState.AdDismissed
+                }
 
+                override fun onInterstitialAdFailedToShowFullScreenContent(adError: AdError) {
+                    _interstitialAdState.value =
+                        InterstitialAdState.AdFailedToShowFullScreenContent(adError)
+                }
+
+                override fun onInterstitialAdImpression() {
+                    _interstitialAdState.value = InterstitialAdState.AdImpression
+                }
+
+            })
+    }
 
 
 }

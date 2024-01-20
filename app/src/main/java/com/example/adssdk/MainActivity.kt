@@ -8,14 +8,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
 import com.example.module_ads.enums.CollapsibleBannerPosition
-import com.example.module_ads.interstitial.InterstitialAdHelper
 import com.example.module_ads.presentation.AdMobViewModel
-import com.example.module_ads.utils.AdMobAdState
 import com.example.module_ads.utils.AdsConsentManager
+import com.example.module_ads.adstates.CollapsibleBannerAdState
+import com.example.module_ads.adstates.InterstitialAdState
 import com.example.module_ads.utils.initializeAdmobSdk
+import com.example.module_ads.views.debug
 import com.example.module_ads.views.displayBannerAd
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -28,8 +28,7 @@ class MainActivity : AppCompatActivity() {
         private var TAG = "MainActivity"
     }
 
-    @Inject
-    lateinit var interstitialAdHelper: InterstitialAdHelper
+
     private var adsConsentManager: AdsConsentManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +48,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             showAdButton.setOnClickListener {
-                interstitialAdHelper.showNormalInterstitialAd(
-                    this@MainActivity,
-                    adMobViewModel
-                )
+                adMobViewModel.showNormalInterstitialAd(this@MainActivity)
+                adMobViewModel.interstitialAdState.observe(this@MainActivity) {
+                    when (it) {
+                        is InterstitialAdState.AdDismissed -> debug("ad dismissed from state")
+                        else -> {}
+                    }
+                }
             }
             nextButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, TestScreenActivitiy::class.java))
@@ -73,17 +75,20 @@ class MainActivity : AppCompatActivity() {
                     BuildConfig.ad_banner_collapsible, adViewContainer,
                     CollapsibleBannerPosition.BOTTOM
                 )
-                adMobViewModel.adMobAdState.observe(this@MainActivity) {
+                adMobViewModel.collapsibleBannerAdState.observe(this@MainActivity) {
                     when (it) {
-                        is AdMobAdState.AdLoaded -> {
-                           displayBannerAd(adViewContainer,adMobViewModel.returnCollapsedBannerAdView())
+                        is CollapsibleBannerAdState.AdLoaded -> {
+                            displayBannerAd(
+                                adViewContainer,
+                                adMobViewModel.returnCollapsedBannerAdView()
+                            )
                         }
 
-                        is AdMobAdState.AdFailedToLoad -> {
+                        is CollapsibleBannerAdState.AdFailedToLoad -> {
                             adViewContainer.visibility = View.GONE
                         }
 
-                        is AdMobAdState.AdNotAvailable -> {
+                        is CollapsibleBannerAdState.AdNotAvailable -> {
                             adViewContainer.visibility = View.GONE
                         }
                     }

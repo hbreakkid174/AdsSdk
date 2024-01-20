@@ -1,5 +1,8 @@
 package com.example.module_ads.domain
 
+import android.app.Activity
+import com.example.module_ads.presentation.AdMobViewModel
+import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 
 /**
@@ -28,6 +31,8 @@ interface InterstitialAdRepository {
      */
     fun releaseNormalInterstitialAd()
 
+    fun showNormalInterstitialAd(activity: Activity,interstitialAdLoadCallback: InterstitialAdLoadCallback)
+
     /**
      * Callback interface to handle the results of ad loading.
      */
@@ -35,19 +40,29 @@ interface InterstitialAdRepository {
         /**
          * Callback triggered when the ad is successfully loaded.
          */
-        fun onInterstitialAdLoaded()
+        fun onInterstitialAdLoaded(){}
 
         /**
          * Callback triggered when the ad fails to load.
          *
          * @param errorCode The error code indicating the reason for failure.
          */
-        fun onInterstitialAdFailedToLoad(errorCode: Int)
+        fun onInterstitialAdFailedToLoad(errorCode: Int){}
+
         /**
          * Callback triggered when the ad is not available means internet connection is not found
          * App is purchased
          *
          */
         fun onInterstitialAdNotAvailable()
+
+        fun onInterstitialAdClicked(){}
+        fun onInterstitialAdDismissed(){}
+        fun onInterstitialAdImpression(){}
+        fun onInterstitialAdShowed(){}
+        fun onInterstitialAdFailedToShowFullScreenContent(adError: AdError){}
+
+
     }
+
 }
