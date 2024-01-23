@@ -35,6 +35,15 @@
         app:layout_constraintStart_toEndOf="@+id/showAdButton"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/nativeAdShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loadAdButton"
+        android:layout_centerHorizontal="true"
+        android:text="Native Ad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loadAdButton" />
     <FrameLayout
         android:id="@+id/ad_view_container"
         android:layout_width="match_parent"

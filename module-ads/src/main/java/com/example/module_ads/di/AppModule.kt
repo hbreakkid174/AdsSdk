@@ -4,7 +4,9 @@ import android.content.Context
 import com.example.module_ads.data.BannerAdRepositoryImpl
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.data.InterstitialAdRepositoryImpl
+import com.example.module_ads.data.NativeAdRepositoryImpl
 import com.example.module_ads.domain.repositories.BannerAdRepository
+import com.example.module_ads.domain.repositories.NativeAdRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,5 +50,15 @@ object AppModule {
     @Singleton
     fun provideBannerAdRepository(): BannerAdRepository {
         return BannerAdRepositoryImpl()
+    }
+    /**
+     * Provides the implementation of [NativeAdRepository] for AdMob native ads.
+     *
+     * @return The implementation of [NativeAdRepository].
+     */
+    @Provides
+    @Singleton
+    fun provideNativeAdRepository(): NativeAdRepository {
+        return NativeAdRepositoryImpl()
     }
 }

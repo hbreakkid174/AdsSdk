@@ -60,6 +60,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, TestScreenActivitiy::class.java))
 
             }
+            nativeAdShow.setOnClickListener {
+                startActivity(Intent(this@MainActivity, NativeAdTestActivity::class.java))
+            }
             loadCollapsibleBanner()
         }
 
