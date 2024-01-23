@@ -66,7 +66,14 @@ class MainActivity : AppCompatActivity() {
             loadCollapsibleBanner()
         }
 
+        preLoadNativeAd()
 
+    }
+
+    private fun preLoadNativeAd() {
+        if (adsConsentManager?.canRequestAds == true) {
+            adMobViewModel.loadNativeAd(this, BuildConfig.ad_native)
+        }
     }
 
     private fun loadCollapsibleBanner() {

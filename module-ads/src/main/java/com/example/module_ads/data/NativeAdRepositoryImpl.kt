@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -143,7 +144,16 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
                 (headline as TextView).text = mNativeAd?.headline
                 headline.isSelected = true
             }
+            //Call to Action
+            adView.callToActionView?.let { ctaView ->
+                if (mNativeAd?.callToAction == null) {
+                    ctaView.visibility = View.INVISIBLE
+                } else {
+                    ctaView.visibility = View.VISIBLE
+                    (ctaView as Button).text = mNativeAd?.callToAction
+                }
 
+            }
             //Body
             adView.bodyView?.let { bodyView ->
                 if (mNativeAd?.body == null) {
