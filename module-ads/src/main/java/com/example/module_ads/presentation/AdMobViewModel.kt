@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.view.View
+import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,7 @@ import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.domain.usecases.BannerAdUseCase
 import com.example.module_ads.domain.usecases.InterstitialAdUseCase
 import com.example.module_ads.domain.usecases.NativeAdUseCase
+import com.example.module_ads.enums.NativeAdType
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.LoadAdError
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -243,4 +245,15 @@ class AdMobViewModel @Inject constructor(
             })
     }
 
+    fun destroyNativeAd() {
+        nativeAdUseCase.destroyNativeAd()
+    }
+
+    fun populateNativeAdView(
+        activity: Activity,
+        nativeAdContainer: FrameLayout,
+        nativeAdType: NativeAdType
+    ) {
+        nativeAdUseCase.populateNativeAdView(activity, nativeAdContainer, nativeAdType)
+    }
 }

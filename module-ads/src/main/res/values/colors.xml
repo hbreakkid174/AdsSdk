@@ -2,5 +2,9 @@
 <resources>
     <color name="shimmerColor">#C2C2C2</color>
     <color name="adsBgColor">#F2F2F2</color>
-
+    <color name="whiteBgColor">#FFFFFF</color>
+    <color name="outlineColor">#E0E0E0</color>
+    <color name="grayColor">#808080</color>
+    <color name="blueColor">#4285f4</color>
+    <color name="greenColor">#00FF00</color>
 </resources>

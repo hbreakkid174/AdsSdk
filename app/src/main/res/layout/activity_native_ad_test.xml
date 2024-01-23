@@ -6,4 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".NativeAdTestActivity">
 
+    <FrameLayout
+        android:id="@+id/nativeAdContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <include
+            android:id="@+id/nativeAdMediumShimmer"
+            layout="@layout/native_ad_medium_shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
