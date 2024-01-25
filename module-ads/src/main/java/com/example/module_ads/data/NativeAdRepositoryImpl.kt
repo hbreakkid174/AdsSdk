@@ -134,6 +134,9 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
             if (nativeAdType == NativeAdType.MEDIUM || nativeAdType == NativeAdType.LARGE) {
                 val mediaView: MediaView = adView.findViewById(R.id.media_view)
                 adView.mediaView = mediaView
+                if (nativeAdType == NativeAdType.LARGE) {
+                    adView.mediaView?.setImageScaleType(ImageView.ScaleType.FIT_XY)
+                }
             }
             adView.headlineView = adView.findViewById(R.id.ad_headline)
             adView.bodyView = adView.findViewById(R.id.body)
