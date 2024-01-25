@@ -15,10 +15,5 @@ enum class CollapsibleBannerPosition {
      * Represents the bottom position of the collapsible banner.
      * The banner will be displayed at the bottom of the screen.
      */
-    BOTTOM,
-    /**
-     * Represents the none position of the banner.
-     * The normal banner will  be displayed.
-     */
-    NONE
+    BOTTOM
 }

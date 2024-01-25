@@ -48,12 +48,18 @@ class NativeAdTestActivity : AppCompatActivity() {
 //                                NativeAdType.SMALL
 //                            )
                             //native ad banner
+//                            adMobViewModel.populateNativeAdView(
+//                                this@NativeAdTestActivity,
+//                                nativeAdContainerBanner,
+//                                NativeAdType.NATIVE_BANNER
+//                            )
+                            //large native ad
                             adMobViewModel.populateNativeAdView(
                                 this@NativeAdTestActivity,
-                                nativeAdContainerBanner,
-                                NativeAdType.NATIVE_BANNER
+                                nativeAdContainerLarge,
+                                NativeAdType.LARGE
                             )
-                            //large native ad
+
 
                         }
 
@@ -65,7 +71,9 @@ class NativeAdTestActivity : AppCompatActivity() {
                             //small native ad
 //                            manageFrameLayoutView(nativeAdContainerSmall)
                             //native ad banner
-                            manageFrameLayoutView(nativeAdContainerBanner)
+//                            manageFrameLayoutView(nativeAdContainerBanner)
+                            //large native ad
+                            manageFrameLayoutView(nativeAdContainerLarge)
                         }
 
                         is NativeAdState.AdNotAvailable -> {
@@ -76,7 +84,9 @@ class NativeAdTestActivity : AppCompatActivity() {
                             //small native ad
 //                            manageFrameLayoutView(nativeAdContainerSmall)
                             //native ad banner
-                            manageFrameLayoutView(nativeAdContainerBanner)
+//                            manageFrameLayoutView(nativeAdContainerBanner)
+                            //large native ad
+                            manageFrameLayoutView(nativeAdContainerLarge)
                         }
 
                         is NativeAdState.AdClicked -> {

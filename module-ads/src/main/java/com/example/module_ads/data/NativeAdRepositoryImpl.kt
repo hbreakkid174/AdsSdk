@@ -117,7 +117,7 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
                 ) as NativeAdView
 
                 NativeAdType.LARGE -> inflater.inflate(
-                    R.layout.native_ad_medium,
+                    R.layout.native_ad_large,
                     null
                 ) as NativeAdView
 
@@ -131,7 +131,7 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
 
             nativeAdContainer.removeAllViews()
             nativeAdContainer.addView(adView)
-            if (nativeAdType == NativeAdType.MEDIUM) {
+            if (nativeAdType == NativeAdType.MEDIUM || nativeAdType == NativeAdType.LARGE) {
                 val mediaView: MediaView = adView.findViewById(R.id.media_view)
                 adView.mediaView = mediaView
             }
