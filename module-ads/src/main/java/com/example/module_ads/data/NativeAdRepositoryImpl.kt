@@ -112,7 +112,7 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
                 ) as NativeAdView
 
                 NativeAdType.NATIVE_BANNER -> inflater.inflate(
-                    R.layout.native_ad_medium,
+                    R.layout.native_ad_banner,
                     null
                 ) as NativeAdView
 
@@ -122,7 +122,7 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
                 ) as NativeAdView
 
                 NativeAdType.SMALL -> inflater.inflate(
-                    R.layout.native_ad_medium,
+                    R.layout.native_ad_small,
                     null
                 ) as NativeAdView
             }

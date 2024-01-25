@@ -7,9 +7,36 @@
     tools:context=".NativeAdTestActivity">
 
     <FrameLayout
-        android:id="@+id/nativeAdContainer"
+        android:id="@+id/nativeAdContainerBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <include
+            android:id="@+id/nativeAdBannerShimmer"
+            layout="@layout/native_ad_banner_shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/nativeAdContainerSmall"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <include
+            android:id="@+id/nativeAdSmallShimmer"
+            layout="@layout/native_ad_small_shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/nativeAdContainerMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <include

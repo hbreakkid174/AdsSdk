@@ -3,6 +3,7 @@ package com.example.adssdk
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import com.example.adssdk.databinding.ActivityNativeAdTestBinding
 import com.example.module_ads.adstates.NativeAdState
@@ -34,24 +35,48 @@ class NativeAdTestActivity : AppCompatActivity() {
                         is NativeAdState.AdLoaded -> {
 
                             debug("NativeAdState->load")
+                            //medium native ad
+//                            adMobViewModel.populateNativeAdView(
+//                                this@NativeAdTestActivity,
+//                                nativeAdContainerMedium,
+//                                NativeAdType.MEDIUM
+//                            )
+                            //small native ad
+//                            adMobViewModel.populateNativeAdView(
+//                                this@NativeAdTestActivity,
+//                                nativeAdContainerSmall,
+//                                NativeAdType.SMALL
+//                            )
+                            //native ad banner
                             adMobViewModel.populateNativeAdView(
                                 this@NativeAdTestActivity,
-                                nativeAdContainer,
-                                NativeAdType.MEDIUM
+                                nativeAdContainerBanner,
+                                NativeAdType.NATIVE_BANNER
                             )
+                            //large native ad
+
                         }
 
                         is NativeAdState.AdFailedToLoad -> {
                             debug("NativeAdState->failed: ${it.loadAdError}")
-                            nativeAdContainer.removeAllViews()
-                            nativeAdContainer.visibility = View.GONE
+                            //medium native ad
 
+//                            manageFrameLayoutView(nativeAdContainerMedium)
+                            //small native ad
+//                            manageFrameLayoutView(nativeAdContainerSmall)
+                            //native ad banner
+                            manageFrameLayoutView(nativeAdContainerBanner)
                         }
 
                         is NativeAdState.AdNotAvailable -> {
                             debug("NativeAdState->not available")
-                            nativeAdContainer.removeAllViews()
-                            nativeAdContainer.visibility = View.GONE
+                            //medium native ad
+//                            manageFrameLayoutView(nativeAdContainerMedium)
+
+                            //small native ad
+//                            manageFrameLayoutView(nativeAdContainerSmall)
+                            //native ad banner
+                            manageFrameLayoutView(nativeAdContainerBanner)
                         }
 
                         is NativeAdState.AdClicked -> {
@@ -67,6 +92,11 @@ class NativeAdTestActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    private fun manageFrameLayoutView(frameLayout: FrameLayout) {
+        frameLayout.removeAllViews()
+        frameLayout.visibility = View.GONE
     }
 
     override fun onDestroy() {

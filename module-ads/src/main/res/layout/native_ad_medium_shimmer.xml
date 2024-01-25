@@ -17,11 +17,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.gms.ads.nativead.MediaView
+        <ImageView
             android:id="@+id/media_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="0dp"
+            android:background="@color/shimmerColor"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toTopOf="@id/middle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +43,8 @@
 
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:orientation="horizontal"
                 android:layout_marginBottom="5dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

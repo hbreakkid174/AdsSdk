@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             loadCollapsibleBanner()
         }
 
-        preLoadNativeAd()
+//        preLoadNativeAd()
 
     }
 
