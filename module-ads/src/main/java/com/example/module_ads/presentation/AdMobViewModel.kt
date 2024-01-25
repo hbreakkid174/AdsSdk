@@ -13,7 +13,6 @@ import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.adstates.BannerAdState
 import com.example.module_ads.adstates.CollapsibleBannerAdState
-import com.example.module_ads.adstates.InterstitialAdState
 import com.example.module_ads.adstates.NativeAdState
 import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.domain.usecases.BannerAdUseCase
@@ -42,10 +41,6 @@ class AdMobViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-    // LiveData to observe the state of AdMob interstitial ads.
-    private val _interstitialAdState = MutableLiveData<InterstitialAdState>()
-    val interstitialAdState: LiveData<InterstitialAdState> get() = _interstitialAdState
-
     // LiveData to observe the state of AdMob banner ads.
     private val _bannerAdState = MutableLiveData<BannerAdState>()
     val bannerAdState: LiveData<BannerAdState> get() = _bannerAdState
@@ -63,27 +58,12 @@ class AdMobViewModel @Inject constructor(
      *
      * @param adUnitId The ad unit ID to load the ad.
      */
-    fun loadNormalInterstitialAd(adUnitId: String) {
+    fun loadNormalInterstitialAd(
+        adUnitId: String,
+        interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
+    ) {
         // Use the repository to load the ad and handle the callback.
-        interstitialAdUseCase.loadNormalInterstitialAd(adUnitId,
-            object : InterstitialAdRepository.InterstitialAdLoadCallback {
-                // Callback triggered when the ad is successfully loaded.
-                override fun onInterstitialAdLoaded() {
-                    // Update the LiveData with the loaded state.
-                    _interstitialAdState.value = InterstitialAdState.AdLoaded
-                }
-
-                // Callback triggered when ad fails to load.
-                override fun onInterstitialAdFailedToLoad(errorCode: Int) {
-                    // Update the LiveData with the failed to load state and error code.
-                    _interstitialAdState.value = InterstitialAdState.AdFailedToLoad(errorCode)
-                }
-
-                //callback triggered when the interstitial ad is not available
-                override fun onInterstitialAdNotAvailable() {
-                    _interstitialAdState.value = InterstitialAdState.AdNotAvailable
-                }
-            })
+        interstitialAdUseCase.loadNormalInterstitialAd(adUnitId, interstitialAdLoadCallback)
     }
 
     /**
@@ -186,36 +166,13 @@ class AdMobViewModel @Inject constructor(
      */
     fun returnCollapsedBannerAdView() = bannerAdUseCase.returnCollapsedBannerAd()
 
-    fun showNormalInterstitialAd(activity: Activity) {
+    fun showNormalInterstitialAd(
+        activity: Activity,
+        interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
+    ) {
         interstitialAdUseCase.showNormalInterstitialAd(
-            activity,
-            object : InterstitialAdRepository.InterstitialAdLoadCallback {
-                override fun onInterstitialAdNotAvailable() {
-                    _interstitialAdState.value = InterstitialAdState.AdNotAvailable
-                }
-
-                override fun onInterstitialAdShowed() {
-                    _interstitialAdState.value = InterstitialAdState.AdShowed
-                }
-
-                override fun onInterstitialAdClicked() {
-                    _interstitialAdState.value = InterstitialAdState.AdClicked
-                }
-
-                override fun onInterstitialAdDismissed() {
-                    _interstitialAdState.value = InterstitialAdState.AdDismissed
-                }
-
-                override fun onInterstitialAdFailedToShowFullScreenContent(adError: AdError) {
-                    _interstitialAdState.value =
-                        InterstitialAdState.AdFailedToShowFullScreenContent(adError)
-                }
-
-                override fun onInterstitialAdImpression() {
-                    _interstitialAdState.value = InterstitialAdState.AdImpression
-                }
-
-            })
+            activity, interstitialAdLoadCallback
+        )
     }
 
     fun loadNativeAd(activity: Activity, adUnitId: String) {

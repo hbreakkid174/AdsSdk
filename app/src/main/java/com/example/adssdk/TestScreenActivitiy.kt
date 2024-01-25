@@ -8,6 +8,7 @@ import com.example.adssdk.databinding.ActivityTestScreenActivitiyBinding
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.adstates.BannerAdState
+import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.views.displayBannerAd
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +29,12 @@ class TestScreenActivitiy : AppCompatActivity() {
 //        OpenAdHelper.enableResumeAd()
         binding?.apply {
             showAdButton.setOnClickListener {
-                adMobViewModel.showNormalInterstitialAd(this@TestScreenActivitiy)
+                adMobViewModel.showNormalInterstitialAd(this@TestScreenActivitiy,object :InterstitialAdRepository.InterstitialAdLoadCallback{
+                    override fun onInterstitialAdNotAvailable() {
+
+                    }
+
+                })
             }
             if (adsConsentManager?.canRequestAds == true) {
                 adMobViewModel.loadBanner(

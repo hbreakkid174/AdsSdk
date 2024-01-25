@@ -11,7 +11,7 @@ import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.adstates.CollapsibleBannerAdState
-import com.example.module_ads.adstates.InterstitialAdState
+import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.utils.initializeAdmobSdk
 import com.example.module_ads.views.debug
 import com.example.module_ads.views.displayBannerAd
@@ -44,17 +44,25 @@ class MainActivity : AppCompatActivity() {
         binding?.apply {
             loadAdButton.setOnClickListener {
                 if (adsConsentManager?.canRequestAds == true) {
-                    adMobViewModel.loadNormalInterstitialAd(BuildConfig.ad_interstitial)
+                    adMobViewModel.loadNormalInterstitialAd(BuildConfig.ad_interstitial,object :InterstitialAdRepository.InterstitialAdLoadCallback{
+                        override fun onInterstitialAdNotAvailable() {
+
+                        }
+
+                    })
                 }
             }
             showAdButton.setOnClickListener {
-                adMobViewModel.showNormalInterstitialAd(this@MainActivity)
-                adMobViewModel.interstitialAdState.observe(this@MainActivity) {
-                    when (it) {
-                        is InterstitialAdState.AdDismissed -> debug("ad dismissed from state")
-                        else -> {}
+                adMobViewModel.showNormalInterstitialAd(this@MainActivity,object :InterstitialAdRepository.InterstitialAdLoadCallback{
+                    override fun onInterstitialAdNotAvailable() {
+
                     }
-                }
+
+                    override fun onInterstitialAdDismissed() {
+                        debug("ad dismissed from state")                    }
+
+                })
+
             }
             nextButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, TestScreenActivitiy::class.java))

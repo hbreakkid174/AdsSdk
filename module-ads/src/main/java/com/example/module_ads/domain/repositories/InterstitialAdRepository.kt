@@ -58,7 +58,7 @@ interface InterstitialAdRepository {
          * App is purchased
          *
          */
-        fun onInterstitialAdNotAvailable()
+        fun onInterstitialAdNotAvailable(){}
 
         fun onInterstitialAdClicked(){}
         fun onInterstitialAdDismissed(){}
