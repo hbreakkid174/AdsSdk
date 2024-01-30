@@ -21,12 +21,13 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import java.lang.ref.WeakReference
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Implementation of [BannerAdRepository] responsible for loading and returning banner ads.
  */
+@Singleton
 class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
-
 
     // AdView variables for the main banner and collapsible banner
     private var adView: AdView? = null
@@ -65,10 +66,8 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
             adWidth = (adWidthPixels / density).toInt()
         }
 
-
         return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
     }
-
 
     /**
      * Loads a banner ad with the specified ad unit ID.
@@ -91,6 +90,7 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
             adLoadCallback.onBannerAdNotAvailable()
             return
         }
+
         // Initialize the AdView
         if (adView == null) {
             adView = AdView(context)
@@ -141,7 +141,6 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
      */
     override fun returnCollapsedBannerAd(): AdView? = collapsedAdView
 
-
     /**
      * Loads a collapsible banner ad and handles various states using the provided callback.
      *
@@ -158,7 +157,6 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
         collapsibleBannerPosition: CollapsibleBannerPosition,
         adLoadCallback: BannerAdRepository.BannerAdLoadCallback
     ) {
-
 
         // Check if the network is available before attempting to load the banner ad.
         if (!context.isNetworkAvailable()) {
@@ -194,7 +192,6 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
 
             }
 
-
             // Start loading the ad in the background.
             collapsedAdView?.loadAd(adRequest)
 
@@ -216,42 +213,58 @@ class BannerAdRepositoryImpl @Inject constructor() : BannerAdRepository {
             }
         } else {
             debug("Collapsible banner ad already loaded")
+            context.toast("Collapsible banner ad already loaded")
             adLoadCallback.onBannerAdLoaded()
-
         }
     }
 
+    /**
+     * Resumes the banner ad.
+     */
     override fun resumeBannerAd() {
         debug("Resuming banner")
         adView?.resume()
     }
 
+    /**
+     * Pauses the banner ad.
+     */
     override fun pauseBannerAd() {
         debug("pauseBannerAd")
         adView?.pause()
     }
 
+    /**
+     * Destroys the banner ad.
+     */
     override fun destroyBannerAd() {
         debug("Destroy banner ad")
         adView?.destroy()
         adView = null
     }
 
+    /**
+     * Resumes the collapsible banner ad.
+     */
     override fun resumeCollapsibleBanner() {
         debug("resumeCollapsibleBanner")
         collapsedAdView?.resume()
     }
 
+    /**
+     * Pauses the collapsible banner ad.
+     */
     override fun pauseCollapsibleBanner() {
         debug("pauseCollapsibleBanner")
         collapsedAdView?.pause()
     }
 
+    /**
+     * Destroys the collapsible banner ad.
+     */
     override fun destroyCollapsibleBanner() {
         debug("destroy collapsible banner")
         collapsedAdView?.destroy()
         collapsedAdView = null
     }
-
-
 }

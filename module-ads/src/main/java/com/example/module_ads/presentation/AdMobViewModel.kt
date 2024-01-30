@@ -18,7 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
- * ViewModel responsible for managing the state of AdMob interstitial ads.
+ * ViewModel responsible for managing the state of AdMob interstitial ads, banner ads, and native ads.
  *
  * @property interstitialAdUseCase The use case handling AdMob interstitial ad operations.
  * @property bannerAdUseCase The use case handling AdMob banner ad operations.
@@ -33,11 +33,11 @@ class AdMobViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-
     /**
      * Loads a normal interstitial ad with the specified [adUnitId].
      *
      * @param adUnitId The ad unit ID to load the ad.
+     * @param interstitialAdLoadCallback Callback to handle interstitial ad loading events.
      */
     fun loadNormalInterstitialAd(
         adUnitId: String,
@@ -66,8 +66,10 @@ class AdMobViewModel @Inject constructor(
      * Loads a banner ad with the specified [adUnitId].
      *
      * @param adUnitId The ad unit ID to load the ad.
+     * @param context The context to use for loading the banner ad.
+     * @param view The view used to calculate the banner ad size.
+     * @param callback Callback to handle banner ad loading events.
      */
-
     fun loadBanner(
         context: Context,
         adUnitId: String,
@@ -77,7 +79,8 @@ class AdMobViewModel @Inject constructor(
         bannerAdUseCase.loadBannerAd(
             context,
             adUnitId,
-            view, callback
+            view,
+            callback
         )
     }
 
@@ -85,8 +88,10 @@ class AdMobViewModel @Inject constructor(
      * Loads a collapsible banner ad and updates the state accordingly.
      *
      * @param adUnitId The ad unit ID to identify the specific banner ad.
+     * @param context The context to use for loading the banner ad.
      * @param view The View where the banner ad will be displayed.
      * @param collapsibleBannerPosition The position where the collapsible banner will be displayed (TOP or BOTTOM).
+     * @param callback Callback to handle banner ad loading events.
      */
     fun loadCollapsibleBanner(
         context: Context,
@@ -100,10 +105,10 @@ class AdMobViewModel @Inject constructor(
             context,
             adUnitId,
             view,
-            collapsibleBannerPosition, callback
+            collapsibleBannerPosition,
+            callback
         )
     }
-
 
     /**
      * Returns the instance of the loaded banner ad.
@@ -119,6 +124,12 @@ class AdMobViewModel @Inject constructor(
      */
     fun returnCollapsedBannerAdView() = bannerAdUseCase.returnCollapsedBannerAd()
 
+    /**
+     * Shows a normal interstitial ad.
+     *
+     * @param activity The activity where the interstitial ad will be displayed.
+     * @param interstitialAdLoadCallback Callback to handle interstitial ad loading events.
+     */
     fun showNormalInterstitialAd(
         activity: Activity,
         interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
@@ -128,6 +139,13 @@ class AdMobViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Loads a native ad with the specified ad unit ID.
+     *
+     * @param activity The activity where the native ad will be loaded.
+     * @param adUnitId The ad unit ID of the native ad.
+     * @param nativeAdLoadCallback Callback to handle native ad loading events.
+     */
     fun loadNativeAd(
         activity: Activity, adUnitId: String,
         nativeAdLoadCallback: NativeAdRepository.NativeAdLoadCallback
@@ -139,10 +157,20 @@ class AdMobViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Destroys the currently loaded native ad.
+     */
     fun destroyNativeAd() {
         nativeAdUseCase.destroyNativeAd()
     }
 
+    /**
+     * Populates a native ad view within a specified container.
+     *
+     * @param activity The activity where the native ad view will be populated.
+     * @param nativeAdContainer The container for displaying the native ad view.
+     * @param nativeAdType The type of native ad to be displayed.
+     */
     fun populateNativeAdView(
         activity: Activity,
         nativeAdContainer: FrameLayout,
@@ -151,27 +179,45 @@ class AdMobViewModel @Inject constructor(
         nativeAdUseCase.populateNativeAdView(activity, nativeAdContainer, nativeAdType)
     }
 
-
-    fun resumeBannerAd(){
+    /**
+     * Resumes the banner ad.
+     */
+    fun resumeBannerAd() {
         bannerAdUseCase.resumeBannerAd()
     }
 
-    fun pauseBannerAd(){
+    /**
+     * Pauses the banner ad.
+     */
+    fun pauseBannerAd() {
         bannerAdUseCase.pauseBannerAd()
     }
 
-    fun destroyBannerAd(){
+    /**
+     * Destroys the banner ad.
+     */
+    fun destroyBannerAd() {
         bannerAdUseCase.destroyBannerAd()
     }
-    fun resumeCollapsibleBanner(){
+
+    /**
+     * Resumes the collapsible banner ad.
+     */
+    fun resumeCollapsibleBanner() {
         bannerAdUseCase.resumeCollapsibleBanner()
     }
 
-    fun pauseCollapsibleBanner(){
+    /**
+     * Pauses the collapsible banner ad.
+     */
+    fun pauseCollapsibleBanner() {
         bannerAdUseCase.pauseCollapsibleBanner()
     }
 
-    fun destroyCollapsibleBanner(){
+    /**
+     * Destroys the collapsible banner ad.
+     */
+    fun destroyCollapsibleBanner() {
         bannerAdUseCase.destroyCollapsibleBanner()
     }
 }

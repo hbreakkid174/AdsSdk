@@ -81,26 +81,44 @@ class BannerAdUseCase @Inject constructor(
         return bannerAdRepository.returnCollapsedBannerAd()
     }
 
+    /**
+     * Resumes the standard banner ad.
+     */
     fun resumeBannerAd() {
         bannerAdRepository.resumeBannerAd()
     }
 
+    /**
+     * Pauses the standard banner ad.
+     */
     fun pauseBannerAd() {
         bannerAdRepository.pauseBannerAd()
     }
 
+    /**
+     * Destroys the standard banner ad.
+     */
     fun destroyBannerAd() {
         bannerAdRepository.destroyBannerAd()
     }
 
+    /**
+     * Resumes the collapsible banner ad.
+     */
     fun resumeCollapsibleBanner() {
         bannerAdRepository.resumeCollapsibleBanner()
     }
 
+    /**
+     * Pauses the collapsible banner ad.
+     */
     fun pauseCollapsibleBanner() {
         bannerAdRepository.pauseCollapsibleBanner()
     }
 
+    /**
+     * Destroys the collapsible banner ad.
+     */
     fun destroyCollapsibleBanner() {
         bannerAdRepository.destroyCollapsibleBanner()
     }

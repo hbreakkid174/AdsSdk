@@ -29,13 +29,13 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
     // Native ad instance
     private var mNativeAd: NativeAd? = null
 
-    /*
-    Load native ad from the specified ad unit ID.
+    /**
+     *  Load native ad from the specified ad unit ID.
 
-    @param activity: The hosting activity.
-    @param adUnitId: The ID of the ad unit.
-    @param nativeAdLoadCallback: Callback to handle ad loading events.
-    */
+     * @param activity: The hosting activity.
+     * @param adUnitId: The ID of the ad unit.
+     *  @param nativeAdLoadCallback: Callback to handle ad loading events.
+     */
     override fun loadNativeAd(
         activity: Activity,
         adUnitId: String,
@@ -125,13 +125,13 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
     // Get the native ad instance
     override fun getNativeAd() = mNativeAd
 
-    /*
+    /**
     Populate the specified native ad view with the loaded ad content.
 
-    @param activity: The hosting activity.
-    @param nativeAdContainer: The container for the native ad view.
-    @param nativeAdType: The type of native ad view (e.g., MEDIUM, NATIVE_BANNER, LARGE, SMALL).
-    */
+     *  @param activity: The hosting activity.
+     *@param nativeAdContainer: The container for the native ad view.
+     *@param nativeAdType: The type of native ad view (e.g., MEDIUM, NATIVE_BANNER, LARGE, SMALL).
+     */
     override fun populateNativeAdView(
         activity: Activity,
         nativeAdContainer: FrameLayout,
@@ -233,9 +233,9 @@ class NativeAdRepositoryImpl @Inject constructor() : NativeAdRepository {
         }
     }
 
-    /*
+    /**
     Destroy the native ad instance.
-    */
+     */
     override fun destroyNativeAd() {
         debug("native ad is destroyed")
         mNativeAd?.destroy()
