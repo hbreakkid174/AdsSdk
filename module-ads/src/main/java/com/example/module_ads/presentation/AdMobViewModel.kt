@@ -6,21 +6,14 @@ import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
-import com.example.module_ads.enums.CollapsibleBannerPosition
-import com.example.module_ads.adstates.BannerAdState
-import com.example.module_ads.adstates.CollapsibleBannerAdState
-import com.example.module_ads.adstates.NativeAdState
 import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.domain.usecases.BannerAdUseCase
 import com.example.module_ads.domain.usecases.InterstitialAdUseCase
 import com.example.module_ads.domain.usecases.NativeAdUseCase
+import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.enums.NativeAdType
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.LoadAdError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -40,18 +33,6 @@ class AdMobViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-
-    // LiveData to observe the state of AdMob banner ads.
-    private val _bannerAdState = MutableLiveData<BannerAdState>()
-    val bannerAdState: LiveData<BannerAdState> get() = _bannerAdState
-
-    // LiveData to observe the state of AdMob collapsible banner ads.
-    private val _collapsibleBannerAdState = MutableLiveData<CollapsibleBannerAdState>()
-    val collapsibleBannerAdState: LiveData<CollapsibleBannerAdState> get() = _collapsibleBannerAdState
-
-    // LiveData to observe the state of AdMob native ads.
-    private val _nativeAdState = MutableLiveData<NativeAdState>()
-    val nativeAdState: LiveData<NativeAdState> get() = _nativeAdState
 
     /**
      * Loads a normal interstitial ad with the specified [adUnitId].
@@ -87,28 +68,17 @@ class AdMobViewModel @Inject constructor(
      * @param adUnitId The ad unit ID to load the ad.
      */
 
-    fun loadBanner(context: Context, adUnitId: String, view: View) {
-        bannerAdUseCase.loadBannerAd(context,
+    fun loadBanner(
+        context: Context,
+        adUnitId: String,
+        view: View,
+        callback: BannerAdRepository.BannerAdLoadCallback
+    ) {
+        bannerAdUseCase.loadBannerAd(
+            context,
             adUnitId,
-            view,
-            object : BannerAdRepository.BannerAdLoadCallback {
-                // Callback triggered when the ad is successfully loaded.
-                override fun onBannerAdLoaded() {
-                    // Update the LiveData with the loaded state.
-                    _bannerAdState.value = BannerAdState.AdLoaded
-                }
-
-                // Callback triggered when ad fails to load.
-                override fun onBannerAdFailedToLoad(errorCode: Int) {
-                    // Update the LiveData with the failed to load state and error code.
-                    _bannerAdState.value = BannerAdState.AdFailedToLoad(errorCode)
-                }
-
-                //callback triggered when the banner ad is not available
-                override fun onBannerAdNotAvailable() {
-                    _bannerAdState.value = BannerAdState.AdNotAvailable
-                }
-            })
+            view, callback
+        )
     }
 
     /**
@@ -122,33 +92,16 @@ class AdMobViewModel @Inject constructor(
         context: Context,
         adUnitId: String,
         view: View,
-        collapsibleBannerPosition: CollapsibleBannerPosition
+        collapsibleBannerPosition: CollapsibleBannerPosition,
+        callback: BannerAdRepository.BannerAdLoadCallback
     ) {
         // Load the collapsible banner using the bannerAdRepository.
-        bannerAdUseCase.loadCollapsibleBanner(context,
+        bannerAdUseCase.loadCollapsibleBanner(
+            context,
             adUnitId,
             view,
-            collapsibleBannerPosition,
-            object : BannerAdRepository.BannerAdLoadCallback {
-                // Callback triggered when the ad is successfully loaded.
-                override fun onBannerAdLoaded() {
-                    // Update the LiveData with the loaded state.
-                    _collapsibleBannerAdState.value = CollapsibleBannerAdState.AdLoaded
-                }
-
-                // Callback triggered when ad fails to load.
-                override fun onBannerAdFailedToLoad(errorCode: Int) {
-                    // Update the LiveData with the failed to load state and error code.
-                    _collapsibleBannerAdState.value =
-                        CollapsibleBannerAdState.AdFailedToLoad(errorCode)
-                }
-
-                // Callback triggered when the banner ad is not available.
-                override fun onBannerAdNotAvailable() {
-                    // Update the LiveData with the ad not available state.
-                    _collapsibleBannerAdState.value = CollapsibleBannerAdState.AdNotAvailable
-                }
-            })
+            collapsibleBannerPosition, callback
+        )
     }
 
 
@@ -175,31 +128,15 @@ class AdMobViewModel @Inject constructor(
         )
     }
 
-    fun loadNativeAd(activity: Activity, adUnitId: String) {
+    fun loadNativeAd(
+        activity: Activity, adUnitId: String,
+        nativeAdLoadCallback: NativeAdRepository.NativeAdLoadCallback
+    ) {
         nativeAdUseCase.loadNativeAd(
             activity,
             adUnitId,
-            object : NativeAdRepository.NativeAdLoadCallback {
-                override fun onNativeAdLoaded() {
-                    _nativeAdState.value = NativeAdState.AdLoaded
-                }
-
-                override fun onNativeAdFailedToLoad(loadAdError: LoadAdError) {
-                    _nativeAdState.value = NativeAdState.AdFailedToLoad(loadAdError)
-                }
-
-                override fun onNativeAdImpression() {
-                    _nativeAdState.value = NativeAdState.AdImpression
-                }
-
-                override fun onNativeAdClicked() {
-                    _nativeAdState.value = NativeAdState.AdClicked
-                }
-
-                override fun onNativeAdNotAvailable() {
-                    _nativeAdState.value = NativeAdState.AdNotAvailable
-                }
-            })
+            nativeAdLoadCallback
+        )
     }
 
     fun destroyNativeAd() {
@@ -212,5 +149,29 @@ class AdMobViewModel @Inject constructor(
         nativeAdType: NativeAdType
     ) {
         nativeAdUseCase.populateNativeAdView(activity, nativeAdContainer, nativeAdType)
+    }
+
+
+    fun resumeBannerAd(){
+        bannerAdUseCase.resumeBannerAd()
+    }
+
+    fun pauseBannerAd(){
+        bannerAdUseCase.pauseBannerAd()
+    }
+
+    fun destroyBannerAd(){
+        bannerAdUseCase.destroyBannerAd()
+    }
+    fun resumeCollapsibleBanner(){
+        bannerAdUseCase.resumeCollapsibleBanner()
+    }
+
+    fun pauseCollapsibleBanner(){
+        bannerAdUseCase.pauseCollapsibleBanner()
+    }
+
+    fun destroyCollapsibleBanner(){
+        bannerAdUseCase.destroyCollapsibleBanner()
     }
 }

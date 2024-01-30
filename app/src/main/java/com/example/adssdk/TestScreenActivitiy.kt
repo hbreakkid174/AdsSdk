@@ -5,9 +5,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityTestScreenActivitiyBinding
+import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
-import com.example.module_ads.adstates.BannerAdState
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.views.displayBannerAd
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,24 +39,26 @@ class TestScreenActivitiy : AppCompatActivity() {
             if (adsConsentManager?.canRequestAds == true) {
                 adMobViewModel.loadBanner(
                     this@TestScreenActivitiy,
-                    BuildConfig.ad_banner, adViewContainer
-                )
-                adMobViewModel.bannerAdState.observe(this@TestScreenActivitiy) {
-                    when (it) {
-                        is BannerAdState.AdLoaded -> {
+                    BuildConfig.ad_banner, adViewContainer,
+                    object : BannerAdRepository.BannerAdLoadCallback {
+                        override fun onBannerAdLoaded() {
                             displayBannerAd(adViewContainer, adMobViewModel.returnBannerAdView())
 
                         }
 
-                        is BannerAdState.AdFailedToLoad -> {
+                        override fun onBannerAdFailedToLoad(errorCode: Int) {
                             adViewContainer.visibility = View.GONE
+
                         }
 
-                        is BannerAdState.AdNotAvailable -> {
+                        override fun onBannerAdNotAvailable() {
                             adViewContainer.visibility = View.GONE
+
                         }
+
                     }
-                }
+                )
+
 
             }
         }
@@ -64,6 +66,18 @@ class TestScreenActivitiy : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        adMobViewModel.resumeBannerAd()
+    }
+    override fun onPause() {
+        super.onPause()
+        adMobViewModel.pauseBannerAd()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        adMobViewModel.destroyBannerAd()
+    }
     override fun onBackPressed() {
         finish()
     }

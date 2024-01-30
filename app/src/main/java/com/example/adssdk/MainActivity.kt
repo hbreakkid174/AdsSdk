@@ -7,14 +7,16 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
+import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
-import com.example.module_ads.adstates.CollapsibleBannerAdState
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
+import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.utils.initializeAdmobSdk
 import com.example.module_ads.views.debug
 import com.example.module_ads.views.displayBannerAd
+import com.google.android.gms.ads.LoadAdError
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,24 +46,27 @@ class MainActivity : AppCompatActivity() {
         binding?.apply {
             loadAdButton.setOnClickListener {
                 if (adsConsentManager?.canRequestAds == true) {
-                    adMobViewModel.loadNormalInterstitialAd(BuildConfig.ad_interstitial,object :InterstitialAdRepository.InterstitialAdLoadCallback{
+                    adMobViewModel.loadNormalInterstitialAd(BuildConfig.ad_interstitial,
+                        object : InterstitialAdRepository.InterstitialAdLoadCallback {
+                            override fun onInterstitialAdNotAvailable() {
+
+                            }
+
+                        })
+                }
+            }
+            showAdButton.setOnClickListener {
+                adMobViewModel.showNormalInterstitialAd(this@MainActivity,
+                    object : InterstitialAdRepository.InterstitialAdLoadCallback {
                         override fun onInterstitialAdNotAvailable() {
 
                         }
 
+                        override fun onInterstitialAdDismissed() {
+                            debug("ad dismissed from state")
+                        }
+
                     })
-                }
-            }
-            showAdButton.setOnClickListener {
-                adMobViewModel.showNormalInterstitialAd(this@MainActivity,object :InterstitialAdRepository.InterstitialAdLoadCallback{
-                    override fun onInterstitialAdNotAvailable() {
-
-                    }
-
-                    override fun onInterstitialAdDismissed() {
-                        debug("ad dismissed from state")                    }
-
-                })
 
             }
             nextButton.setOnClickListener {
@@ -80,7 +85,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun preLoadNativeAd() {
         if (adsConsentManager?.canRequestAds == true) {
-            adMobViewModel.loadNativeAd(this, BuildConfig.ad_native)
+            adMobViewModel.loadNativeAd(
+                this,
+                BuildConfig.ad_native,
+                object : NativeAdRepository.NativeAdLoadCallback {
+                    override fun onNativeAdLoaded() {}
+
+                    override fun onNativeAdFailedToLoad(loadAdError: LoadAdError) {}
+
+                    override fun onNativeAdNotAvailable() {}
+
+                })
         }
     }
 
@@ -91,26 +106,27 @@ class MainActivity : AppCompatActivity() {
                 adMobViewModel.loadCollapsibleBanner(
                     this@MainActivity,
                     BuildConfig.ad_banner_collapsible, adViewContainer,
-                    CollapsibleBannerPosition.BOTTOM
-                )
-                adMobViewModel.collapsibleBannerAdState.observe(this@MainActivity) {
-                    when (it) {
-                        is CollapsibleBannerAdState.AdLoaded -> {
+                    CollapsibleBannerPosition.BOTTOM,
+                    object : BannerAdRepository.BannerAdLoadCallback {
+                        override fun onBannerAdLoaded() {
                             displayBannerAd(
                                 adViewContainer,
                                 adMobViewModel.returnCollapsedBannerAdView()
                             )
                         }
 
-                        is CollapsibleBannerAdState.AdFailedToLoad -> {
+                        override fun onBannerAdFailedToLoad(errorCode: Int) {
                             adViewContainer.visibility = View.GONE
+
                         }
 
-                        is CollapsibleBannerAdState.AdNotAvailable -> {
+                        override fun onBannerAdNotAvailable() {
                             adViewContainer.visibility = View.GONE
+
                         }
+
                     }
-                }
+                )
             }
 
 
@@ -118,6 +134,20 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        adMobViewModel.resumeCollapsibleBanner()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adMobViewModel.pauseCollapsibleBanner()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adMobViewModel.destroyCollapsibleBanner()
+    }
 
     private fun initSdk() {
         initializeAdmobSdk {

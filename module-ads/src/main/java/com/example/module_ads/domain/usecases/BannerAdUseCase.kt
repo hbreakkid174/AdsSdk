@@ -80,4 +80,28 @@ class BannerAdUseCase @Inject constructor(
     fun returnCollapsedBannerAd(): AdView? {
         return bannerAdRepository.returnCollapsedBannerAd()
     }
+
+    fun resumeBannerAd() {
+        bannerAdRepository.resumeBannerAd()
+    }
+
+    fun pauseBannerAd() {
+        bannerAdRepository.pauseBannerAd()
+    }
+
+    fun destroyBannerAd() {
+        bannerAdRepository.destroyBannerAd()
+    }
+
+    fun resumeCollapsibleBanner() {
+        bannerAdRepository.resumeCollapsibleBanner()
+    }
+
+    fun pauseCollapsibleBanner() {
+        bannerAdRepository.pauseCollapsibleBanner()
+    }
+
+    fun destroyCollapsibleBanner() {
+        bannerAdRepository.destroyCollapsibleBanner()
+    }
 }

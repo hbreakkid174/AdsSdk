@@ -1,16 +1,17 @@
 package com.example.adssdk
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityNativeAdTestBinding
-import com.example.module_ads.adstates.NativeAdState
+import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.enums.NativeAdType
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.views.debug
+import com.google.android.gms.ads.LoadAdError
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,11 +30,9 @@ class NativeAdTestActivity : AppCompatActivity() {
         adsConsentManager = AdsConsentManager(this) {}
         binding?.apply {
             if (adsConsentManager?.canRequestAds == true) {
-                adMobViewModel.loadNativeAd(this@NativeAdTestActivity, BuildConfig.ad_native)
-                adMobViewModel.nativeAdState.observe(this@NativeAdTestActivity) {
-                    when (it) {
-                        is NativeAdState.AdLoaded -> {
-
+                adMobViewModel.loadNativeAd(this@NativeAdTestActivity, BuildConfig.ad_native,
+                    object :NativeAdRepository.NativeAdLoadCallback{
+                        override fun onNativeAdLoaded() {
                             debug("NativeAdState->load")
                             //medium native ad
 //                            adMobViewModel.populateNativeAdView(
@@ -48,35 +47,21 @@ class NativeAdTestActivity : AppCompatActivity() {
 //                                NativeAdType.SMALL
 //                            )
                             //native ad banner
-//                            adMobViewModel.populateNativeAdView(
-//                                this@NativeAdTestActivity,
-//                                nativeAdContainerBanner,
-//                                NativeAdType.NATIVE_BANNER
-//                            )
-                            //large native ad
                             adMobViewModel.populateNativeAdView(
                                 this@NativeAdTestActivity,
-                                nativeAdContainerLarge,
-                                NativeAdType.LARGE
+                                nativeAdContainerBanner,
+                                NativeAdType.NATIVE_BANNER
                             )
-
-
-                        }
-
-                        is NativeAdState.AdFailedToLoad -> {
-                            debug("NativeAdState->failed: ${it.loadAdError}")
-                            //medium native ad
-
-//                            manageFrameLayoutView(nativeAdContainerMedium)
-                            //small native ad
-//                            manageFrameLayoutView(nativeAdContainerSmall)
-                            //native ad banner
-//                            manageFrameLayoutView(nativeAdContainerBanner)
                             //large native ad
-                            manageFrameLayoutView(nativeAdContainerLarge)
+//                            adMobViewModel.populateNativeAdView(
+//                                this@NativeAdTestActivity,
+//                                nativeAdContainerLarge,
+//                                NativeAdType.LARGE
+//                            )
+
                         }
 
-                        is NativeAdState.AdNotAvailable -> {
+                        override fun onNativeAdNotAvailable() {
                             debug("NativeAdState->not available")
                             //medium native ad
 //                            manageFrameLayoutView(nativeAdContainerMedium)
@@ -84,20 +69,24 @@ class NativeAdTestActivity : AppCompatActivity() {
                             //small native ad
 //                            manageFrameLayoutView(nativeAdContainerSmall)
                             //native ad banner
-//                            manageFrameLayoutView(nativeAdContainerBanner)
+                            manageFrameLayoutView(nativeAdContainerBanner)
                             //large native ad
-                            manageFrameLayoutView(nativeAdContainerLarge)
+//                            manageFrameLayoutView(nativeAdContainerLarge)
                         }
 
-                        is NativeAdState.AdClicked -> {
-                            debug("NativeAdState->clicked")
-                        }
+                        override fun onNativeAdFailedToLoad(loadAdError: LoadAdError) {
+                            debug("NativeAdState->failed: ${loadAdError.message}")
+                            //medium native ad
 
-                        is NativeAdState.AdImpression -> {
-                            debug("NativeAdState->impression")
+//                            manageFrameLayoutView(nativeAdContainerMedium)
+                            //small native ad
+//                            manageFrameLayoutView(nativeAdContainerSmall)
+                            //native ad banner
+                            manageFrameLayoutView(nativeAdContainerBanner)
+                            //large native ad
+//                            manageFrameLayoutView(nativeAdContainerLarge)
                         }
-                    }
-                }
+                    })
             }
 
         }

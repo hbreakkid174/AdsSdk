@@ -44,6 +44,14 @@ interface BannerAdRepository {
         adLoadCallback: BannerAdLoadCallback
     )
 
+    fun resumeBannerAd()
+    fun pauseBannerAd()
+    fun destroyBannerAd()
+
+    fun resumeCollapsibleBanner()
+    fun pauseCollapsibleBanner()
+    fun destroyCollapsibleBanner()
+
     interface BannerAdLoadCallback {
         /**
          * Callback triggered when the ad is successfully loaded.

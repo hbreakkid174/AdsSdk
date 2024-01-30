@@ -8,6 +8,7 @@
     <FrameLayout
         android:id="@+id/nativeAdContainerLarge"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -22,7 +23,6 @@
         android:id="@+id/nativeAdContainerBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <include
