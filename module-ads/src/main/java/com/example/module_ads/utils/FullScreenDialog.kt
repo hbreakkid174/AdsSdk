@@ -10,7 +10,8 @@ import android.view.Window
 import com.example.module_ads.R
 import com.example.module_ads.databinding.InterstitialLoadingDialogBinding
 
-class FullScreenDialog (private val context: Activity,
+class FullScreenDialog(
+    private val context: Activity,
 ) : Dialog(context, R.style.FullScreenDialogStyle) {
 
     private lateinit var binding: InterstitialLoadingDialogBinding
@@ -21,7 +22,6 @@ class FullScreenDialog (private val context: Activity,
         window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
         binding = InterstitialLoadingDialogBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         window?.apply {
             setLayout(
                 ViewGroup.LayoutParams.MATCH_PARENT,

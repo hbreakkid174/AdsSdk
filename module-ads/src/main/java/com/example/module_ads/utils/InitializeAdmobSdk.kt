@@ -35,7 +35,6 @@ class InitializeAdmobSdk private constructor(private val context: Context) {
             // Load an ad or any other initialization logic.
             context.toast("initialize Mobile Ads Admob...")
             debug("initialize Mobile Ads Admob...")
-
             // Set your test devices. Check your logcat output for the hashed device ID to
             // get test ads on a physical device. e.g.
             // "Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("ABCDEF012345"))

@@ -77,6 +77,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, NativeAdTestActivity::class.java))
             }
             loadCollapsibleBanner()
+            inAppPurchase.setOnClickListener {
+                startActivity(Intent(this@MainActivity, InAppPurchaseActivity::class.java))
+            }
         }
 
 //        preLoadNativeAd()

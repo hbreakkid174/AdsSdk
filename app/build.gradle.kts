@@ -83,6 +83,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     api(project(":module-ads"))
+    api(project(":module-ads:in-app-billing"))
 
 
 //Dagger - Hilt
