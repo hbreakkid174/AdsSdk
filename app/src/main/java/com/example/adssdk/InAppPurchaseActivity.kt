@@ -3,45 +3,28 @@ package com.example.adssdk
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.adssdk.databinding.ActivityInAppPurchaseBinding
-import com.example.in_app_billing.BillingEvent
-import com.example.in_app_billing.BillingHelper
-import com.example.in_app_billing.BillingListener
+import com.example.module_ads.billing.InAppConsumableBilling
 import com.example.module_ads.views.debug
 
-class InAppPurchaseActivity : AppCompatActivity(), BillingListener {
+class InAppPurchaseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInAppPurchaseBinding
-    private lateinit var billingHelper: BillingHelper
     private var oneTimePurchaseProductId = "android.test.purchased"
+    private var inAppConsumableBilling: InAppConsumableBilling? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInAppPurchaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        billingHelper = BillingHelper(
-            this,
-            productInAppPurchases = listOf(oneTimePurchaseProductId),
-            productSubscriptions = null,
-            enableLogging = true,
-            billingListener = this
-
-        )
+        inAppConsumableBilling = InAppConsumableBilling(this, productId = oneTimePurchaseProductId)
         binding.apply {
             purchaseApp.setOnClickListener {
-                billingHelper.launchPurchaseFlow(
-                    this@InAppPurchaseActivity,
-                    oneTimePurchaseProductId
-                )
+                inAppConsumableBilling?.purchaseItem()
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        billingHelper.endClientConnection()
     }
 
-    override fun onBillingEvent(event: BillingEvent, message: String?, responseCode: Int?) {
-        debug("onBillingEvent>>event: $event")
-        debug("onBillingEvent>>message: $message")
-        debug("onBillingEvent>>responseCode: $responseCode")
-    }
+
 }

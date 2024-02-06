@@ -66,6 +66,8 @@ dependencies {
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.42")
     kapt("com.google.dagger:hilt-android-compiler:2.42")
-    api(project(":module-ads:in-app-billing"))
 
+    val billing_version = "6.0.0"
+
+    api("com.android.billingclient:billing-ktx:$billing_version")
 }

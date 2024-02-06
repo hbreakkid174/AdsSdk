@@ -16,4 +16,3 @@ dependencyResolutionManagement {
 rootProject.name = "AdsSdk"
 include(":app")
 include(":module-ads")
-include(":module-ads:in-app-billing")
