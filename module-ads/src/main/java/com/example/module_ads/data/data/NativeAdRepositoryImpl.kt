@@ -1,4 +1,4 @@
-package com.example.module_ads.data
+package com.example.module_ads.data.data
 
 import android.app.Activity
 import android.view.LayoutInflater

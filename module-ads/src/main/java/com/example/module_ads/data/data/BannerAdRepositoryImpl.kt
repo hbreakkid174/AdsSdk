@@ -1,4 +1,4 @@
-package com.example.module_ads.data
+package com.example.module_ads.data.data
 
 import android.content.Context
 import android.os.Build
@@ -7,7 +7,6 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
 import android.view.WindowMetrics
-import androidx.lifecycle.LifecycleOwner
 import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.views.debug
@@ -19,7 +18,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
-import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Singleton
 

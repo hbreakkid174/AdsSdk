@@ -1,7 +1,9 @@
 package com.example.module_ads.domain.usecases
 
 import android.app.Activity
+import com.example.module_ads.data.model.InterstitialAdInfo
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
+import com.example.module_ads.domain.repositories.InterstitialAdRepository.InterstitialAdLoadCallback
 import javax.inject.Inject
 
 /**
@@ -20,10 +22,11 @@ class InterstitialAdUseCase @Inject constructor(
      * @param callback The callback to handle ad loading results.
      */
     fun loadNormalInterstitialAd(
-        adUnitId: String,
-        callback: InterstitialAdRepository.InterstitialAdLoadCallback
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
+        callback: InterstitialAdLoadCallback
     ) {
-        interstitialAdRepository.loadNormalInterstitialAd(adUnitId, callback)
+        interstitialAdRepository.loadNormalInterstitialAd(adInfo,isPurchased, callback)
     }
 
     /**

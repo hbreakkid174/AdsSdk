@@ -1,9 +1,10 @@
-package com.example.module_ads.data
+package com.example.module_ads.data.data
 
 import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import com.example.module_ads.data.model.InterstitialAdInfo
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.views.debug
@@ -29,10 +30,11 @@ class InterstitialAdRepositoryImpl @Inject constructor(
 
     // The InterstitialAd instance for normal interstitial ads.
     private var normalInterstitialAd: InterstitialAd? = null
-    private var adIsLoading: Boolean = false
 
     // The full-screen dialog to show while loading the ad.
     private var fullScreenDialog: FullScreenDialog? = null
+
+    private val adInterstitialARepo = HashMap<Int, InterstitialAdInfo>()
 
     /**
      * Load a normal interstitial ad with the specified [adUnitId].
@@ -41,49 +43,70 @@ class InterstitialAdRepositoryImpl @Inject constructor(
      * @param callback The callback to handle ad loading results.
      */
     override fun loadNormalInterstitialAd(
-        adUnitId: String, callback: InterstitialAdRepository.InterstitialAdLoadCallback
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean,
+        callback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
         if (!context.isNetworkAvailable()) {
             debug("Ad is not available due to network error")
             callback.onInterstitialAdNotAvailable()
             return
         }
-        // Request a new ad if one isn't already loaded.
-        if (adIsLoading || normalInterstitialAd != null) {
-            debug("already loaded normalInterstitialAd")
+        if (!adInfo.isRemoteConfig) {
+            debug("Ad is not available due to remote config error")
+            callback.onInterstitialAdNotAvailable()
             return
         }
-        adIsLoading = true
-
-        // Build an AdRequest to load the interstitial ad.
-        val adRequest = AdRequest.Builder().build()
-
-        // Load the interstitial ad.
-        InterstitialAd.load(context, adUnitId, adRequest, object : InterstitialAdLoadCallback() {
-            // Callback triggered when ad fails to load.
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                val error =
-                    "domain: ${adError.domain}, code: ${adError.code}, " + "message: ${adError.message}"
-                debug("onAdFailedToLoad() with error $error")
-                context.toast("onAdFailedToLoad() with error $error")
-                // Set the ad instance to null.
-                normalInterstitialAd = null
-                adIsLoading = false
-                // Invoke the callback with the error code.
-                callback.onInterstitialAdFailedToLoad(adError.code)
-            }
-
-            // Callback triggered when ad is successfully loaded.
-            override fun onAdLoaded(interstitialAd1: InterstitialAd) {
-                debug("Ad was loaded.")
-                context.toast("Ad was loaded.")
-                // Set the loaded ad instance.
-                normalInterstitialAd = interstitialAd1
-                adIsLoading = false
-                // Invoke the callback indicating successful ad load.
+        if (isPurchased) {
+            debug("Ad is not available due to purchase error")
+            callback.onInterstitialAdNotAvailable()
+            return
+        }
+        if (adInterstitialARepo.containsKey(adInfo.adKey)) {
+            // Request a new ad if one isn't already loaded.
+            if (adInterstitialARepo[adInfo.adKey]?.isAdsLoading == true || adInterstitialARepo[adInfo.adKey]?.interstitialAd != null) {
+                debug("already loaded normalInterstitialAd")
                 callback.onInterstitialAdLoaded()
+                return
             }
-        })
+        } else {
+            adInterstitialARepo[adInfo.adKey] = adInfo
+            adInterstitialARepo[adInfo.adKey]?.isAdsLoading = true
+
+            // Build an AdRequest to load the interstitial ad.
+            val adRequest = AdRequest.Builder().build()
+
+            // Load the interstitial ad.
+            InterstitialAd.load(
+                context,
+                adInfo.adUnitId,
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    // Callback triggered when ad fails to load.
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        val error =
+                            "domain: ${adError.domain}, code: ${adError.code}, " + "message: ${adError.message}"
+                        debug("onAdFailedToLoad() with error $error")
+                        context.toast("onAdFailedToLoad() with error $error")
+                        // Set the ad instance to null.
+                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = null
+                        adInterstitialARepo[adInfo.adKey]?.isAdsLoading = false
+                        // Invoke the callback with the error code.
+                        callback.onInterstitialAdFailedToLoad(adError.code)
+                    }
+
+                    // Callback triggered when ad is successfully loaded.
+                    override fun onAdLoaded(interstitialAd1: InterstitialAd) {
+                        debug("Ad was loaded.")
+                        context.toast("Ad was loaded.")
+                        // Set the loaded ad instance.
+                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = interstitialAd1
+                        adInterstitialARepo[adInfo.adKey]?.isAdsLoading = false
+                        // Invoke the callback indicating successful ad load.
+                        callback.onInterstitialAdLoaded()
+                    }
+                })
+        }
 
     }
 

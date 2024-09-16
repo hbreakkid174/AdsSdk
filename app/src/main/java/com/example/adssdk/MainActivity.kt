@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.adssdk.databinding.ActivityMainBinding
+import com.example.module_ads.data.model.InterstitialAdInfo
 import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.enums.CollapsibleBannerPosition
 import com.example.module_ads.presentation.AdMobViewModel
@@ -46,13 +47,11 @@ class MainActivity : AppCompatActivity() {
         binding?.apply {
             loadAdButton.setOnClickListener {
                 if (adsConsentManager?.canRequestAds == true) {
-                    adMobViewModel.loadNormalInterstitialAd(BuildConfig.ad_interstitial,
-                        object : InterstitialAdRepository.InterstitialAdLoadCallback {
-                            override fun onInterstitialAdNotAvailable() {
+                    adMobViewModel.loadNormalInterstitialAd(
+                        adInfo = interAdOne, callback =object : InterstitialAdRepository.InterstitialAdLoadCallback{
 
-                            }
-
-                        })
+                        }
+                    )
                 }
             }
             showAdButton.setOnClickListener {

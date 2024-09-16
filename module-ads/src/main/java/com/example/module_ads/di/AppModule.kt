@@ -1,10 +1,10 @@
 package com.example.module_ads.di
 
 import android.content.Context
-import com.example.module_ads.data.BannerAdRepositoryImpl
+import com.example.module_ads.data.data.BannerAdRepositoryImpl
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
-import com.example.module_ads.data.InterstitialAdRepositoryImpl
-import com.example.module_ads.data.NativeAdRepositoryImpl
+import com.example.module_ads.data.data.InterstitialAdRepositoryImpl
+import com.example.module_ads.data.data.NativeAdRepositoryImpl
 import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.domain.repositories.NativeAdRepository
 import dagger.Module

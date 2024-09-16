@@ -1,6 +1,7 @@
 package com.example.module_ads.domain.repositories
 
 import android.app.Activity
+import com.example.module_ads.data.model.InterstitialAdInfo
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 
@@ -15,7 +16,11 @@ interface InterstitialAdRepository {
      * @param adUnitId The ad unit ID to load the ad.
      * @param callback The callback to handle ad loading results.
      */
-    fun loadNormalInterstitialAd(adUnitId: String, callback: InterstitialAdLoadCallback)
+    fun loadNormalInterstitialAd(
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
+        callback: InterstitialAdLoadCallback
+    )
 
     /**
      * Returns the instance of the loaded normal interstitial ad.
@@ -29,13 +34,17 @@ interface InterstitialAdRepository {
      * This is typically done when the ad is no longer needed.
      */
     fun releaseNormalInterstitialAd()
+
     /**
      * Shows a normal interstitial ad.
      *
      * @param activity The activity where the ad will be displayed.
      * @param interstitialAdLoadCallback The callback to handle interstitialAd results.
      */
-    fun showNormalInterstitialAd(activity: Activity,interstitialAdLoadCallback: InterstitialAdLoadCallback)
+    fun showNormalInterstitialAd(
+        activity: Activity,
+        interstitialAdLoadCallback: InterstitialAdLoadCallback
+    )
 
     /**
      * Callback interface to handle the results of ad loading.
@@ -44,27 +53,27 @@ interface InterstitialAdRepository {
         /**
          * Callback triggered when the ad is successfully loaded.
          */
-        fun onInterstitialAdLoaded(){}
+        fun onInterstitialAdLoaded() {}
 
         /**
          * Callback triggered when the ad fails to load.
          *
          * @param errorCode The error code indicating the reason for failure.
          */
-        fun onInterstitialAdFailedToLoad(errorCode: Int){}
+        fun onInterstitialAdFailedToLoad(errorCode: Int) {}
 
         /**
          * Callback triggered when the ad is not available means internet connection is not found
          * App is purchased
          *
          */
-        fun onInterstitialAdNotAvailable(){}
+        fun onInterstitialAdNotAvailable() {}
 
-        fun onInterstitialAdClicked(){}
-        fun onInterstitialAdDismissed(){}
-        fun onInterstitialAdImpression(){}
-        fun onInterstitialAdShowed(){}
-        fun onInterstitialAdFailedToShowFullScreenContent(adError: AdError){}
+        fun onInterstitialAdClicked() {}
+        fun onInterstitialAdDismissed() {}
+        fun onInterstitialAdImpression() {}
+        fun onInterstitialAdShowed() {}
+        fun onInterstitialAdFailedToShowFullScreenContent(adError: AdError) {}
 
 
     }

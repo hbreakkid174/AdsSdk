@@ -6,8 +6,10 @@ import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
+import com.example.module_ads.data.model.InterstitialAdInfo
 import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
+import com.example.module_ads.domain.repositories.InterstitialAdRepository.InterstitialAdLoadCallback
 import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.domain.usecases.BannerAdUseCase
 import com.example.module_ads.domain.usecases.InterstitialAdUseCase
@@ -40,11 +42,12 @@ class AdMobViewModel @Inject constructor(
      * @param interstitialAdLoadCallback Callback to handle interstitial ad loading events.
      */
     fun loadNormalInterstitialAd(
-        adUnitId: String,
-        interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
+        callback: InterstitialAdLoadCallback
     ) {
         // Use the repository to load the ad and handle the callback.
-        interstitialAdUseCase.loadNormalInterstitialAd(adUnitId, interstitialAdLoadCallback)
+        interstitialAdUseCase.loadNormalInterstitialAd(adInfo, isPurchased,callback)
     }
 
     /**
