@@ -34,13 +34,13 @@ class InterstitialAdUseCase @Inject constructor(
      *
      * @return The instance of the loaded interstitial ad, or null if not loaded.
      */
-    fun returnNormalInterstitialAd() = interstitialAdRepository.returnNormalInterstitialAd()
+    fun returnNormalInterstitialAd(adKey: Int) = interstitialAdRepository.returnNormalInterstitialAd(adKey)
 
     /**
      * Releases the reference to the normal interstitial ad instance.
      * This is typically done when the ad is no longer needed.
      */
-    fun releaseNormalInterstitialAd() = interstitialAdRepository.releaseNormalInterstitialAd()
+    fun releaseNormalInterstitialAd(adKey: Int) = interstitialAdRepository.releaseNormalInterstitialAd(adKey)
 
     /**
      * Shows a normal interstitial ad.
@@ -49,9 +49,11 @@ class InterstitialAdUseCase @Inject constructor(
      * @param callback The callback to handle interstitial ad results.
      */
     fun showNormalInterstitialAd(
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
         activity: Activity,
         callback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
-        interstitialAdRepository.showNormalInterstitialAd(activity, callback)
+        interstitialAdRepository.showNormalInterstitialAd(adInfo,isPurchased,activity, callback)
     }
 }

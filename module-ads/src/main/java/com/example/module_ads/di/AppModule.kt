@@ -61,4 +61,10 @@ object AppModule {
     fun provideNativeAdRepository(): NativeAdRepository {
         return NativeAdRepositoryImpl()
     }
+
+    @Provides
+    @Singleton
+    fun provideBreakInfoArrayList(): ArrayList<Any> {
+        return ArrayList()
+    }
 }

@@ -28,8 +28,6 @@ class InterstitialAdRepositoryImpl @Inject constructor(
     private val context: Context
 ) : InterstitialAdRepository {
 
-    // The InterstitialAd instance for normal interstitial ads.
-    private var normalInterstitialAd: InterstitialAd? = null
 
     // The full-screen dialog to show while loading the ad.
     private var fullScreenDialog: FullScreenDialog? = null
@@ -115,15 +113,16 @@ class InterstitialAdRepositoryImpl @Inject constructor(
      *
      * @return The instance of the loaded interstitial ad, or null if not loaded.
      */
-    override fun returnNormalInterstitialAd() = normalInterstitialAd
+    override fun returnNormalInterstitialAd(adKey: Int) = adInterstitialARepo[adKey]
 
     /**
      * Release the reference to the normal interstitial ad instance.
      * This is typically done when the ad is no longer needed.
      */
-    override fun releaseNormalInterstitialAd() {
+    override fun releaseNormalInterstitialAd(adKey: Int) {
         // Set the ad instance to null, releasing the reference.
-        normalInterstitialAd = null
+        adInterstitialARepo[adKey]?.interstitialAd = null
+        adInterstitialARepo[adKey]?.isAdsLoading = false
     }
 
     /**
@@ -133,72 +132,99 @@ class InterstitialAdRepositoryImpl @Inject constructor(
      * @param interstitialAdLoadCallback The callback to handle interstitialAd results.
      */
     override fun showNormalInterstitialAd(
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean,
         activity: Activity,
         interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
-// Check if a normal interstitial ad is loaded.
-        if (normalInterstitialAd != null) {
-            // Initialize the full-screen dialog.
-            fullScreenDialog = FullScreenDialog(activity)
-            // Show the full-screen dialog.
-            fullScreenDialog?.show()
-            Handler(Looper.getMainLooper()).postDelayed({
-                // Show the interstitial ad.
-                normalInterstitialAd?.show(activity)
-            }, 1000)
+        if (!context.isNetworkAvailable()) {
+            debug("Ad is not available due to network error")
+            interstitialAdLoadCallback.onInterstitialAdNotAvailable()
+            return
+        }
+        if (!adInfo.isRemoteConfig) {
+            debug("Ad is not available due to remote config error")
+            interstitialAdLoadCallback.onInterstitialAdNotAvailable()
+            return
+        }
+        if (isPurchased) {
+            debug("Ad is not available due to purchase error")
+            interstitialAdLoadCallback.onInterstitialAdNotAvailable()
+            return
+        }
+        if (adInterstitialARepo.containsKey(adInfo.adKey)) {
 
+// Check if a normal interstitial ad is loaded.
+            if (adInterstitialARepo[adInfo.adKey]?.interstitialAd != null) {
+                // Initialize the full-screen dialog.
+                fullScreenDialog = FullScreenDialog(activity)
+                // Show the full-screen dialog.
+                fullScreenDialog?.show()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    // Show the interstitial ad.
+                    adInterstitialARepo[adInfo.adKey]?.interstitialAd?.show(activity)
+                }, 1000)
+
+            } else {
+                interstitialAdLoadCallback.onInterstitialAdNotAvailable()
+            }
+
+            // Set the full-screen content callback for the interstitial ad.
+            adInterstitialARepo[adInfo.adKey]?.interstitialAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    // Callback triggered when the ad is clicked.
+                    override fun onAdClicked() {
+                        debug("Ad was clicked.")
+                        activity.toast("Ad was clicked.")
+                        interstitialAdLoadCallback.onInterstitialAdClicked()
+                    }
+
+                    // Callback triggered when ad is dismissed.
+                    override fun onAdDismissedFullScreenContent() {
+                        debug("Ad dismissed fullscreen content.")
+                        activity.toast("Ad dismissed fullscreen content.")
+                        // Release the ad reference.
+                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = null
+                        adInterstitialARepo.remove(adInfo.adKey)
+                        // Dismiss the full-screen dialog.
+                        fullScreenDialog?.dismiss()
+                        fullScreenDialog = null
+                        interstitialAdLoadCallback.onInterstitialAdDismissed()
+                    }
+
+                    // Callback triggered when ad fails to show.
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        debug("Ad failed to show fullscreen content.")
+                        activity.toast("Ad failed to show fullscreen content.")
+                        // Dismiss the full-screen dialog.
+                        fullScreenDialog?.dismiss()
+                        fullScreenDialog = null
+                        // Release the ad reference.
+                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = null
+                        adInterstitialARepo.remove(adInfo.adKey)
+                        interstitialAdLoadCallback.onInterstitialAdFailedToShowFullScreenContent(
+                            adError
+                        )
+                    }
+
+                    // Callback triggered when an impression is recorded.
+                    override fun onAdImpression() {
+                        debug("Ad recorded an impression.")
+                        activity.toast("Ad recorded an impression.")
+                        interstitialAdLoadCallback.onInterstitialAdImpression()
+                    }
+
+                    // Callback triggered when the ad is shown.
+                    override fun onAdShowedFullScreenContent() {
+                        debug("Ad showed fullscreen content.")
+                        activity.toast("Ad showed fullscreen content.")
+                        interstitialAdLoadCallback.onInterstitialAdShowed()
+
+                    }
+                }
         } else {
             interstitialAdLoadCallback.onInterstitialAdNotAvailable()
+            return
         }
-
-        // Set the full-screen content callback for the interstitial ad.
-        returnNormalInterstitialAd()?.fullScreenContentCallback =
-            object : FullScreenContentCallback() {
-                // Callback triggered when the ad is clicked.
-                override fun onAdClicked() {
-                    debug("Ad was clicked.")
-                    activity.toast("Ad was clicked.")
-                    interstitialAdLoadCallback.onInterstitialAdClicked()
-                }
-
-                // Callback triggered when ad is dismissed.
-                override fun onAdDismissedFullScreenContent() {
-                    debug("Ad dismissed fullscreen content.")
-                    activity.toast("Ad dismissed fullscreen content.")
-                    // Release the ad reference.
-                    normalInterstitialAd = null
-                    // Dismiss the full-screen dialog.
-                    fullScreenDialog?.dismiss()
-                    fullScreenDialog = null
-                    interstitialAdLoadCallback.onInterstitialAdDismissed()
-                }
-
-                // Callback triggered when ad fails to show.
-                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                    debug("Ad failed to show fullscreen content.")
-                    activity.toast("Ad failed to show fullscreen content.")
-                    // Dismiss the full-screen dialog.
-                    fullScreenDialog?.dismiss()
-                    fullScreenDialog = null
-                    // Release the ad reference.
-                    normalInterstitialAd = null
-                    interstitialAdLoadCallback.onInterstitialAdFailedToShowFullScreenContent(adError)
-                }
-
-                // Callback triggered when an impression is recorded.
-                override fun onAdImpression() {
-                    debug("Ad recorded an impression.")
-                    activity.toast("Ad recorded an impression.")
-                    interstitialAdLoadCallback.onInterstitialAdImpression()
-                }
-
-                // Callback triggered when the ad is shown.
-                override fun onAdShowedFullScreenContent() {
-                    debug("Ad showed fullscreen content.")
-                    activity.toast("Ad showed fullscreen content.")
-                    interstitialAdLoadCallback.onInterstitialAdShowed()
-
-                }
-            }
     }
 }

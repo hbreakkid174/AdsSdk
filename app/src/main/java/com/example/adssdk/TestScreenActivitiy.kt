@@ -9,8 +9,10 @@ import com.example.module_ads.domain.repositories.BannerAdRepository
 import com.example.module_ads.presentation.AdMobViewModel
 import com.example.module_ads.utils.AdsConsentManager
 import com.example.module_ads.domain.repositories.InterstitialAdRepository
+import com.example.module_ads.views.debug
 import com.example.module_ads.views.displayBannerAd
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TestScreenActivitiy : AppCompatActivity() {
@@ -19,22 +21,24 @@ class TestScreenActivitiy : AppCompatActivity() {
 
 
     private var adsConsentManager: AdsConsentManager? = null
-
+    @Inject
+    lateinit var breakInfoArrayList: ArrayList<Any>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTestScreenActivitiyBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         adsConsentManager = AdsConsentManager(this) {}
+        debug("breakInfoArrayList: ${breakInfoArrayList.size}")
 //        OpenAdHelper.enableResumeAd()
         binding?.apply {
             showAdButton.setOnClickListener {
-                adMobViewModel.showNormalInterstitialAd(this@TestScreenActivitiy,object :InterstitialAdRepository.InterstitialAdLoadCallback{
-                    override fun onInterstitialAdNotAvailable() {
-
-                    }
-
-                })
+//                adMobViewModel.showNormalInterstitialAd(this@TestScreenActivitiy,object :InterstitialAdRepository.InterstitialAdLoadCallback{
+//                    override fun onInterstitialAdNotAvailable() {
+//
+//                    }
+//
+//                })
             }
             if (adsConsentManager?.canRequestAds == true) {
                 adMobViewModel.loadBanner(

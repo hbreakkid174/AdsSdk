@@ -27,13 +27,13 @@ interface InterstitialAdRepository {
      *
      * @return The instance of the loaded interstitial ad, or null if not loaded.
      */
-    fun returnNormalInterstitialAd(): InterstitialAd?
+    fun returnNormalInterstitialAd(adKey: Int): InterstitialAdInfo?
 
     /**
      * Releases the reference to the normal interstitial ad instance.
      * This is typically done when the ad is no longer needed.
      */
-    fun releaseNormalInterstitialAd()
+    fun releaseNormalInterstitialAd(adKey: Int)
 
     /**
      * Shows a normal interstitial ad.
@@ -42,6 +42,8 @@ interface InterstitialAdRepository {
      * @param interstitialAdLoadCallback The callback to handle interstitialAd results.
      */
     fun showNormalInterstitialAd(
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
         activity: Activity,
         interstitialAdLoadCallback: InterstitialAdLoadCallback
     )

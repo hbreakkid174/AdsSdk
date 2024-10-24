@@ -55,14 +55,14 @@ class AdMobViewModel @Inject constructor(
      *
      * @return The instance of the loaded interstitial ad, or null if not loaded.
      */
-    fun returnNormalInterstitialAd() = interstitialAdUseCase.returnNormalInterstitialAd()
+    fun returnNormalInterstitialAd(adKey: Int) = interstitialAdUseCase.returnNormalInterstitialAd(adKey)
 
     /**
      * Releases the reference to the normal interstitial ad instance.
      * This is typically done when the ad is no longer needed.
      */
-    fun releaseNormalInterstitialAd() {
-        interstitialAdUseCase.releaseNormalInterstitialAd()
+    fun releaseNormalInterstitialAd(adKey: Int) {
+        interstitialAdUseCase.releaseNormalInterstitialAd(adKey)
     }
 
     /**
@@ -134,10 +134,13 @@ class AdMobViewModel @Inject constructor(
      * @param interstitialAdLoadCallback Callback to handle interstitial ad loading events.
      */
     fun showNormalInterstitialAd(
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
         activity: Activity,
         interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
         interstitialAdUseCase.showNormalInterstitialAd(
+            adInfo,isPurchased,
             activity, interstitialAdLoadCallback
         )
     }

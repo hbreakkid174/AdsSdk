@@ -19,6 +19,7 @@ import com.example.module_ads.views.debug
 import com.example.module_ads.views.displayBannerAd
 import com.google.android.gms.ads.LoadAdError
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,7 +31,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private var TAG = "MainActivity"
     }
-
+    @Inject
+    lateinit var breakInfoArrayList: ArrayList<Any>
 
     private var adsConsentManager: AdsConsentManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,19 +45,23 @@ class MainActivity : AppCompatActivity() {
                 initSdk()
             }
         }
+        breakInfoArrayList.add("qweqw")
 
         binding?.apply {
             loadAdButton.setOnClickListener {
                 if (adsConsentManager?.canRequestAds == true) {
                     adMobViewModel.loadNormalInterstitialAd(
-                        adInfo = interAdOne, callback =object : InterstitialAdRepository.InterstitialAdLoadCallback{
+                        adInfo = interAdOne,
+                        callback = object : InterstitialAdRepository.InterstitialAdLoadCallback {
 
                         }
                     )
                 }
             }
             showAdButton.setOnClickListener {
-                adMobViewModel.showNormalInterstitialAd(this@MainActivity,
+                adMobViewModel.showNormalInterstitialAd(adInfo = interAdOne,
+                    activity = this@MainActivity,
+                    interstitialAdLoadCallback =
                     object : InterstitialAdRepository.InterstitialAdLoadCallback {
                         override fun onInterstitialAdNotAvailable() {
 
@@ -65,7 +71,8 @@ class MainActivity : AppCompatActivity() {
                             debug("ad dismissed from state")
                         }
 
-                    })
+                    }
+                )
 
             }
             nextButton.setOnClickListener {
