@@ -9,7 +9,6 @@ import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.utils.FullScreenDialog
 import com.example.module_ads.views.debug
 import com.example.module_ads.views.isNetworkAvailable
-import com.example.module_ads.views.toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -19,26 +18,28 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import javax.inject.Inject
 
 /**
- * Implementation of the [InterstitialAdRepository] interface.
+ * Implementation of the [InterstitialAdRepository] interface for managing and displaying interstitial ads.
  *
- * @property context The application context.
- * @constructor Injected constructor to provide the application context.
+ * @property context The application context used for network availability and loading ads.
  */
 class InterstitialAdRepositoryImpl @Inject constructor(
     private val context: Context
 ) : InterstitialAdRepository {
 
 
-    // The full-screen dialog to show while loading the ad.
+
+    // Dialog to display while the ad is loading.
     private var fullScreenDialog: FullScreenDialog? = null
 
-    private val adInterstitialARepo = HashMap<Int, InterstitialAdInfo>()
+    // Cache to store loaded interstitial ads with their respective keys.
+    private val adInterstitialRepo = HashMap<Int, InterstitialAdInfo>()
 
     /**
-     * Load a normal interstitial ad with the specified [adUnitId].
+     * Loads a standard interstitial ad for the given [adInfo].
      *
-     * @param adUnitId The ad unit ID to load the ad.
-     * @param callback The callback to handle ad loading results.
+     * @param adInfo Information about the interstitial ad to be loaded.
+     * @param isPurchased Indicates if the user has made a purchase, affecting ad display.
+     * @param callback Callback to notify when the ad is loaded or fails.
      */
     override fun loadNormalInterstitialAd(
         adInfo: InterstitialAdInfo,
@@ -60,76 +61,70 @@ class InterstitialAdRepositoryImpl @Inject constructor(
             callback.onInterstitialAdNotAvailable()
             return
         }
-        if (adInterstitialARepo.containsKey(adInfo.adKey)) {
-            // Request a new ad if one isn't already loaded.
-            if (adInterstitialARepo[adInfo.adKey]?.isAdsLoading == true || adInterstitialARepo[adInfo.adKey]?.interstitialAd != null) {
-                debug("already loaded normalInterstitialAd")
-                callback.onInterstitialAdLoaded()
-                return
-            }
-        } else {
-            adInterstitialARepo[adInfo.adKey] = adInfo
-            adInterstitialARepo[adInfo.adKey]?.isAdsLoading = true
-
-            // Build an AdRequest to load the interstitial ad.
-            val adRequest = AdRequest.Builder().build()
-
-            // Load the interstitial ad.
-            InterstitialAd.load(
-                context,
-                adInfo.adUnitId,
-                adRequest,
-                object : InterstitialAdLoadCallback() {
-                    // Callback triggered when ad fails to load.
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        val error =
-                            "domain: ${adError.domain}, code: ${adError.code}, " + "message: ${adError.message}"
-                        debug("onAdFailedToLoad() with error $error")
-                        context.toast("onAdFailedToLoad() with error $error")
-                        // Set the ad instance to null.
-                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = null
-                        adInterstitialARepo[adInfo.adKey]?.isAdsLoading = false
-                        // Invoke the callback with the error code.
-                        callback.onInterstitialAdFailedToLoad(adError.code)
-                    }
-
-                    // Callback triggered when ad is successfully loaded.
-                    override fun onAdLoaded(interstitialAd1: InterstitialAd) {
-                        debug("Ad was loaded.")
-                        context.toast("Ad was loaded.")
-                        // Set the loaded ad instance.
-                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = interstitialAd1
-                        adInterstitialARepo[adInfo.adKey]?.isAdsLoading = false
-                        // Invoke the callback indicating successful ad load.
-                        callback.onInterstitialAdLoaded()
-                    }
-                })
+        // Check if the ad is already loaded or in progress.
+        val existingAdInfo = adInterstitialRepo[adInfo.adKey]
+        if (existingAdInfo?.isAdsLoading == true || existingAdInfo?.interstitialAd != null) {
+            debug("already loaded normalInterstitialAd")
+            callback.onInterstitialAdLoaded()
+            return
         }
+        // Cache ad info and mark as loading.
+        adInterstitialRepo[adInfo.adKey] = adInfo.apply { isAdsLoading = true }
+        // Build and load the interstitial ad request.
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(
+            context,
+            adInfo.adUnitId,
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    val error = "domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}"
+                    debug("onAdFailedToLoad() with error $error")
+                    adInterstitialRepo[adInfo.adKey]?.isAdsLoading = false
+                    adInterstitialRepo[adInfo.adKey]?.interstitialAd = null
+
+                    callback.onInterstitialAdFailedToLoad(adError.code)
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    debug("Ad was loaded.")
+                    adInterstitialRepo[adInfo.adKey]?.apply {
+                        this.interstitialAd = interstitialAd
+                        isAdsLoading = false
+                    }
+                    callback.onInterstitialAdLoaded()
+                }
+            })
+
 
     }
 
     /**
-     * Return the instance of the loaded normal interstitial ad.
+     * Returns the interstitial ad instance associated with the given [adKey].
      *
-     * @return The instance of the loaded interstitial ad, or null if not loaded.
+     * @param adKey Unique key identifying the ad.
+     * @return The [InterstitialAdInfo] instance or null if not found.
      */
-    override fun returnNormalInterstitialAd(adKey: Int) = adInterstitialARepo[adKey]
+    override fun returnNormalInterstitialAd(adKey: Int) = adInterstitialRepo[adKey]
+
 
     /**
-     * Release the reference to the normal interstitial ad instance.
-     * This is typically done when the ad is no longer needed.
+     * Releases the reference to the loaded interstitial ad associated with the given [adKey].
+     *
+     * @param adKey Unique key identifying the ad to be released.
      */
     override fun releaseNormalInterstitialAd(adKey: Int) {
-        // Set the ad instance to null, releasing the reference.
-        adInterstitialARepo[adKey]?.interstitialAd = null
-        adInterstitialARepo[adKey]?.isAdsLoading = false
+        adInterstitialRepo[adKey]?.interstitialAd = null
+        adInterstitialRepo[adKey]?.isAdsLoading = false
     }
 
     /**
-     * Shows a normal interstitial ad.
+     * Displays a loaded interstitial ad.
      *
-     * @param activity The activity where the ad will be displayed.
-     * @param interstitialAdLoadCallback The callback to handle interstitialAd results.
+     * @param adInfo Information about the interstitial ad to be shown.
+     * @param isPurchased Indicates if the user has made a purchase, affecting ad display.
+     * @param activity The activity in which the ad will be shown.
+     * @param interstitialAdLoadCallback Callback to notify about ad show events or errors.
      */
     override fun showNormalInterstitialAd(
         adInfo: InterstitialAdInfo,
@@ -152,77 +147,49 @@ class InterstitialAdRepositoryImpl @Inject constructor(
             interstitialAdLoadCallback.onInterstitialAdNotAvailable()
             return
         }
-        if (adInterstitialARepo.containsKey(adInfo.adKey)) {
+        val interstitialAdInfo = adInterstitialRepo[adInfo.adKey]
+        val interstitialAd = interstitialAdInfo?.interstitialAd
+        if (interstitialAd != null) {
+            fullScreenDialog = FullScreenDialog(activity).apply { show() }
 
-// Check if a normal interstitial ad is loaded.
-            if (adInterstitialARepo[adInfo.adKey]?.interstitialAd != null) {
-                // Initialize the full-screen dialog.
-                fullScreenDialog = FullScreenDialog(activity)
-                // Show the full-screen dialog.
-                fullScreenDialog?.show()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    // Show the interstitial ad.
-                    adInterstitialARepo[adInfo.adKey]?.interstitialAd?.show(activity)
-                }, 1000)
-
-            } else {
-                interstitialAdLoadCallback.onInterstitialAdNotAvailable()
-            }
-
-            // Set the full-screen content callback for the interstitial ad.
-            adInterstitialARepo[adInfo.adKey]?.interstitialAd?.fullScreenContentCallback =
-                object : FullScreenContentCallback() {
-                    // Callback triggered when the ad is clicked.
-                    override fun onAdClicked() {
-                        debug("Ad was clicked.")
-                        activity.toast("Ad was clicked.")
-                        interstitialAdLoadCallback.onInterstitialAdClicked()
-                    }
-
-                    // Callback triggered when ad is dismissed.
-                    override fun onAdDismissedFullScreenContent() {
-                        debug("Ad dismissed fullscreen content.")
-                        activity.toast("Ad dismissed fullscreen content.")
-                        // Release the ad reference.
-                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = null
-                        adInterstitialARepo.remove(adInfo.adKey)
-                        // Dismiss the full-screen dialog.
-                        fullScreenDialog?.dismiss()
-                        fullScreenDialog = null
-                        interstitialAdLoadCallback.onInterstitialAdDismissed()
-                    }
-
-                    // Callback triggered when ad fails to show.
-                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                        debug("Ad failed to show fullscreen content.")
-                        activity.toast("Ad failed to show fullscreen content.")
-                        // Dismiss the full-screen dialog.
-                        fullScreenDialog?.dismiss()
-                        fullScreenDialog = null
-                        // Release the ad reference.
-                        adInterstitialARepo[adInfo.adKey]?.interstitialAd = null
-                        adInterstitialARepo.remove(adInfo.adKey)
-                        interstitialAdLoadCallback.onInterstitialAdFailedToShowFullScreenContent(
-                            adError
-                        )
-                    }
-
-                    // Callback triggered when an impression is recorded.
-                    override fun onAdImpression() {
-                        debug("Ad recorded an impression.")
-                        activity.toast("Ad recorded an impression.")
-                        interstitialAdLoadCallback.onInterstitialAdImpression()
-                    }
-
-                    // Callback triggered when the ad is shown.
-                    override fun onAdShowedFullScreenContent() {
-                        debug("Ad showed fullscreen content.")
-                        activity.toast("Ad showed fullscreen content.")
-                        interstitialAdLoadCallback.onInterstitialAdShowed()
-
-                    }
+            Handler(Looper.getMainLooper()).postDelayed({
+                interstitialAd.show(activity)
+            }, 1000)
+            // Handle full-screen content callbacks.
+            interstitialAd.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdClicked() {
+                    debug("Ad was clicked")
+                    interstitialAdLoadCallback.onInterstitialAdClicked()
                 }
-        } else {
+
+                override fun onAdDismissedFullScreenContent() {
+                    debug("Ad dismissed fullscreen content")
+                    adInterstitialRepo[adInfo.adKey]?.interstitialAd = null
+                    fullScreenDialog?.dismiss()
+                    fullScreenDialog = null
+                    interstitialAdLoadCallback.onInterstitialAdDismissed()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    debug("Ad failed to show fullscreen content")
+
+                    fullScreenDialog?.dismiss()
+                    adInterstitialRepo[adInfo.adKey]?.interstitialAd = null
+                    interstitialAdLoadCallback.onInterstitialAdFailedToShowFullScreenContent(adError)
+                }
+
+                override fun onAdImpression() {
+                    debug("Ad recorded an impression")
+                    interstitialAdLoadCallback.onInterstitialAdImpression()
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    debug("Ad showed fullscreen content")
+                    interstitialAdLoadCallback.onInterstitialAdShowed()
+                }
+            }
+        }else{
+            debug("Ad Not Available")
             interstitialAdLoadCallback.onInterstitialAdNotAvailable()
             return
         }

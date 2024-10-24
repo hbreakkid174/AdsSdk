@@ -8,7 +8,6 @@ import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
 import com.example.module_ads.data.model.InterstitialAdInfo
 import com.example.module_ads.domain.repositories.BannerAdRepository
-import com.example.module_ads.domain.repositories.InterstitialAdRepository
 import com.example.module_ads.domain.repositories.InterstitialAdRepository.InterstitialAdLoadCallback
 import com.example.module_ads.domain.repositories.NativeAdRepository
 import com.example.module_ads.domain.usecases.BannerAdUseCase
@@ -36,10 +35,12 @@ class AdMobViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     /**
-     * Loads a normal interstitial ad with the specified [adUnitId].
+     * Initiates the loading of a normal interstitial ad with the specified [adInfo].
      *
-     * @param adUnitId The ad unit ID to load the ad.
-     * @param interstitialAdLoadCallback Callback to handle interstitial ad loading events.
+     * @param adInfo Contains information such as ad unit ID and configuration details for the ad.
+     * @param isPurchased A flag indicating whether the user has made a purchase that disables ads.
+     *                    If true, the ad won't be loaded.
+     * @param callback The [InterstitialAdLoadCallback] to handle loading events (e.g., success or failure).
      */
     fun loadNormalInterstitialAd(
         adInfo: InterstitialAdInfo,
@@ -51,20 +52,42 @@ class AdMobViewModel @Inject constructor(
     }
 
     /**
-     * Returns the instance of the loaded normal interstitial ad.
+     * Retrieves the currently loaded normal interstitial ad instance using the provided [adKey].
      *
-     * @return The instance of the loaded interstitial ad, or null if not loaded.
+     * @param adKey The unique identifier for the ad.
+     * @return The instance of [InterstitialAdInfo] that represents the loaded interstitial ad, or null if not loaded.
      */
     fun returnNormalInterstitialAd(adKey: Int) = interstitialAdUseCase.returnNormalInterstitialAd(adKey)
 
     /**
-     * Releases the reference to the normal interstitial ad instance.
-     * This is typically done when the ad is no longer needed.
+     * Releases the reference to the interstitial ad for the specified [adKey].
+     * This should be called when the ad is no longer needed, to free up resources.
+     *
+     * @param adKey The unique identifier for the ad to be released.
      */
     fun releaseNormalInterstitialAd(adKey: Int) {
         interstitialAdUseCase.releaseNormalInterstitialAd(adKey)
     }
-
+    /**
+     * Displays a normal interstitial ad within the specified [activity].
+     *
+     * @param adInfo The [InterstitialAdInfo] containing details of the ad to be shown.
+     * @param isPurchased A flag indicating whether the user has made a purchase that disables ads.
+     *                    If true, the ad won't be shown.
+     * @param activity The activity where the interstitial ad will be displayed.
+     * @param interstitialAdLoadCallback The callback to handle events related to displaying the ad (e.g., impressions, dismissals).
+     */
+    fun showNormalInterstitialAd(
+        adInfo: InterstitialAdInfo,
+        isPurchased: Boolean = false,
+        activity: Activity,
+        interstitialAdLoadCallback: InterstitialAdLoadCallback
+    ) {
+        interstitialAdUseCase.showNormalInterstitialAd(
+            adInfo,isPurchased,
+            activity, interstitialAdLoadCallback
+        )
+    }
     /**
      * Loads a banner ad with the specified [adUnitId].
      *
@@ -127,23 +150,7 @@ class AdMobViewModel @Inject constructor(
      */
     fun returnCollapsedBannerAdView() = bannerAdUseCase.returnCollapsedBannerAd()
 
-    /**
-     * Shows a normal interstitial ad.
-     *
-     * @param activity The activity where the interstitial ad will be displayed.
-     * @param interstitialAdLoadCallback Callback to handle interstitial ad loading events.
-     */
-    fun showNormalInterstitialAd(
-        adInfo: InterstitialAdInfo,
-        isPurchased: Boolean = false,
-        activity: Activity,
-        interstitialAdLoadCallback: InterstitialAdRepository.InterstitialAdLoadCallback
-    ) {
-        interstitialAdUseCase.showNormalInterstitialAd(
-            adInfo,isPurchased,
-            activity, interstitialAdLoadCallback
-        )
-    }
+
 
     /**
      * Loads a native ad with the specified ad unit ID.

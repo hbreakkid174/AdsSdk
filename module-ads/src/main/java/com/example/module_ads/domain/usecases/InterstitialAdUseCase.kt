@@ -7,46 +7,56 @@ import com.example.module_ads.domain.repositories.InterstitialAdRepository.Inter
 import javax.inject.Inject
 
 /**
- * UseCase class responsible for handling operations related to loading and managing interstitial ads.
+ * Use case class responsible for handling operations related to interstitial ad loading, management, and display.
  *
- * @param interstitialAdRepository The repository providing the implementation details for interstitial ad operations.
+ * @param interstitialAdRepository The repository responsible for managing the interstitial ad operations.
  */
 class InterstitialAdUseCase @Inject constructor(
     private val interstitialAdRepository: InterstitialAdRepository
 ) {
 
     /**
-     * Loads a normal interstitial ad with the specified [adUnitId].
+     * Initiates the loading of a normal interstitial ad.
      *
-     * @param adUnitId The ad unit ID to load the ad.
-     * @param callback The callback to handle ad loading results.
+     * @param adInfo The [InterstitialAdInfo] containing ad configuration details (e.g., ad unit ID).
+     * @param isPurchased Flag indicating whether the user has purchased a service or subscription
+     *        that disables ads. If true, the ad will not be loaded.
+     * @param callback The [InterstitialAdLoadCallback] to handle the result of the ad loading process.
      */
     fun loadNormalInterstitialAd(
         adInfo: InterstitialAdInfo,
         isPurchased: Boolean = false,
         callback: InterstitialAdLoadCallback
     ) {
-        interstitialAdRepository.loadNormalInterstitialAd(adInfo,isPurchased, callback)
+        interstitialAdRepository.loadNormalInterstitialAd(adInfo, isPurchased, callback)
     }
 
     /**
-     * Returns the instance of the loaded normal interstitial ad.
+     * Retrieves the instance of the loaded interstitial ad based on the provided [adKey].
      *
-     * @return The instance of the loaded interstitial ad, or null if not loaded.
+     * @param adKey The unique identifier for the ad.
+     * @return The [InterstitialAdInfo] containing the loaded interstitial ad, or null if not loaded.
      */
-    fun returnNormalInterstitialAd(adKey: Int) = interstitialAdRepository.returnNormalInterstitialAd(adKey)
+    fun returnNormalInterstitialAd(adKey: Int) =
+        interstitialAdRepository.returnNormalInterstitialAd(adKey)
 
     /**
-     * Releases the reference to the normal interstitial ad instance.
-     * This is typically done when the ad is no longer needed.
+     * Releases the reference to the interstitial ad instance associated with the given [adKey].
+     * This should be called when the ad is no longer needed to free up memory and resources.
+     *
+     * @param adKey The unique identifier for the ad to be released.
      */
-    fun releaseNormalInterstitialAd(adKey: Int) = interstitialAdRepository.releaseNormalInterstitialAd(adKey)
+    fun releaseNormalInterstitialAd(adKey: Int) =
+        interstitialAdRepository.releaseNormalInterstitialAd(adKey)
 
     /**
-     * Shows a normal interstitial ad.
+     * Displays a normal interstitial ad in the specified [activity].
      *
-     * @param activity The activity where the ad will be displayed.
-     * @param callback The callback to handle interstitial ad results.
+     * @param adInfo The [InterstitialAdInfo] containing details of the ad to be shown.
+     * @param isPurchased Flag indicating whether the user has purchased a service or subscription
+     *        that removes ads. If true, the ad will not be shown.
+     * @param activity The [Activity] in which the interstitial ad will be displayed.
+     * @param callback The [InterstitialAdRepository.InterstitialAdLoadCallback] to handle events during ad display.
      */
     fun showNormalInterstitialAd(
         adInfo: InterstitialAdInfo,
@@ -54,6 +64,6 @@ class InterstitialAdUseCase @Inject constructor(
         activity: Activity,
         callback: InterstitialAdRepository.InterstitialAdLoadCallback
     ) {
-        interstitialAdRepository.showNormalInterstitialAd(adInfo,isPurchased,activity, callback)
+        interstitialAdRepository.showNormalInterstitialAd(adInfo, isPurchased, activity, callback)
     }
 }
